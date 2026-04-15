@@ -317,7 +317,7 @@
             const response = await fetch(SHEETY_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ [SHEET_OBJ]: newApp })
+                body: JSON.stringify({ application: newApp })
             });
             if (!response.ok) throw new Error("Sheety error");
             showAlert(`✅ Application submitted! ID: ${applicationId}. Committee will review.`, "success");
