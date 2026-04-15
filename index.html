@@ -32,7 +32,6 @@
             box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35);
         }
 
-        /* header */
         .hero {
             background: linear-gradient(115deg, #0c4e3b 0%, #1c6d5e 100%);
             padding: 36px 32px;
@@ -57,7 +56,6 @@
             padding: 32px 44px 44px;
         }
 
-        /* cards & sections */
         .form-card {
             background: #fefefe;
             border-radius: 28px;
@@ -94,10 +92,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-        .input-group label i {
-            font-weight: normal;
-            color: #2c8c6e;
         }
         .required-star {
             color: #e05a5a;
@@ -231,7 +225,7 @@
             padding: 8px 16px;
             font-weight: 500;
             margin-top: 12px;
-            width: 200px;
+            width: 220px;
             cursor: pointer;
         }
         .vote-summary {
@@ -239,6 +233,17 @@
             border-radius: 20px;
             padding: 12px;
             margin: 12px 0;
+        }
+        .vote-details {
+            background: #ffffffdd;
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            border: 1px solid #e9ecef;
+        }
+        .vote-details strong {
+            color: #1f5e4c;
         }
         .flex-between {
             display: flex;
@@ -329,8 +334,8 @@
             </div>
             <div id="loginBox" class="form-card">
                 <div class="grid-2col">
-                    <div class="input-group"><label>Committee username</label><input type="text" id="committeeUser" placeholder="e.g., john.banda"><small class="hint">Demo: john.banda, mary.phiri, peter.mwale, grace.chisale, charles.dzoole</small></div>
-                    <div class="input-group"><label>PIN code</label><input type="password" id="committeePin" placeholder="••••"><small class="hint">Default PIN: 1234 (all members)</small></div>
+                    <div class="input-group"><label>Committee username</label><input type="text" id="committeeUser" placeholder="e.g., joseph"><small class="hint">Usernames: joseph, harry, amos, emmanuel, levie, chifundo, marvin</small></div>
+                    <div class="input-group"><label>PIN code</label><input type="password" id="committeePin" placeholder="••••••"><small class="hint">Use your assigned PIN (chair26, patron26, ops2026, masau26, treas26)</small></div>
                 </div>
                 <button class="btn-admin" id="committeeLoginBtn">🔐 LOGIN TO DASHBOARD</button>
             </div>
@@ -356,26 +361,24 @@
     const SHEETY_API = "https://api.sheety.co/3ac95be1e7d1588ffe19f585e744f83a/weMasauLoanApplications/applications";
     const SHEET_OBJ = "applications";
     
-    // EmailJS keys (working demo config)
     const EMAILJS_PUBLIC = "g36wnJhl9MeP65N7H";
     const EMAILJS_SERVICE = "service_dnj10br";
     const EMAILJS_TEMPLATE = "template_fx0sgeh";
     emailjs.init(EMAILJS_PUBLIC);
     
-    // Hardcoded committee members (demo friendly)
-    var committeeMembers = [
-    { username: "joseph", name: "Joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
-    { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
-    { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
-    { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
-    { username: "levie", name: "Levie Sezza", role: "Committee Member", pin: "masau26", email: "levie.sezza@gmail.com" },
-    { username: "chifundo", name: "Chifundo Lodzeni", role: "Committee Member", pin: "masau26", email: "lodzenice@gmail.com" },
-    { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
-];
+    // *** UPDATED COMMITTEE MEMBERS AS REQUESTED ***
+    const COMMITTEE_MEMBERS = [
+        { username: "joseph", name: "Joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
+        { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
+        { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
+        { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
+        { username: "levie", name: "Levie Sezza", role: "Committee Member", pin: "masau26", email: "levie.sezza@gmail.com" },
+        { username: "chifundo", name: "Chifundo Lodzeni", role: "Committee Member", pin: "masau26", email: "lodzenice@gmail.com" },
+        { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
+    ];
     
     let currentCommittee = null;
     
-    // Loan term brackets (amount → term in months)
     const TERM_BRACKETS = [
         { max: 250999, termMonths: "1", display: "1 month" },
         { max: 600999, termMonths: "2", display: "2 months" },
@@ -394,7 +397,6 @@
     
     function formatMwk(amount) { return "MWK " + Number(amount).toLocaleString(); }
     
-    // show global alert
     function showAlert(message, type = "info") {
         const alertDiv = document.getElementById("globalAlert");
         alertDiv.className = `alert-banner alert-${type}`;
@@ -404,7 +406,6 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
     
-    // Email: send to applicant
     function sendApplicantEmail(applicantEmail, fullName, appId, amount, statusMsg) {
         let bodyMsg = "";
         if (statusMsg === "Received") bodyMsg = `Dear ${fullName},\n\nYour loan application (${appId}) has been received successfully. Our committee will review and you'll be notified. Thank you for trusting We Masau.`;
@@ -423,7 +424,6 @@
         }).then(() => console.log(`Email to ${applicantEmail} sent`)).catch(e => console.warn("EmailJS err", e));
     }
     
-    // BCC committee notification (all members in BCC)
     function notifyAllCommitteeBCC(applicantData) {
         const allEmails = COMMITTEE_MEMBERS.map(m => m.email).join(",");
         const firstChairEmail = COMMITTEE_MEMBERS[0].email;
@@ -440,7 +440,7 @@
         }).catch(e => console.warn("BCC notify failed", e));
     }
     
-    // ========== LOAN AMOUNT -> TERM DYNAMIC ==========
+    // amount term dynamic
     const loanAmountInput = document.getElementById("loanAmount");
     const termBox = document.getElementById("dynamicTermBox");
     const loanTermHidden = document.getElementById("loanTermHidden");
@@ -456,20 +456,18 @@
         }
     });
     
-    // show other loan type field
     const loanTypeSelect = document.getElementById("loanType");
     const otherGroup = document.getElementById("otherLoanTypeGroup");
     loanTypeSelect.addEventListener("change", () => {
         otherGroup.style.display = loanTypeSelect.value === "Other" ? "block" : "none";
     });
     
-    // date constraints
     const prefDate = document.getElementById("preferredDisbursementDate");
     const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
     prefDate.min = tomorrow.toISOString().split('T')[0];
     document.getElementById("joinDate").max = new Date().toISOString().split('T')[0];
     
-    // ========== SUBMIT APPLICATION (Sheety) ==========
+    // ========== SUBMIT APPLICATION ==========
     document.getElementById("submitLoanBtn").addEventListener("click", async () => {
         const fullName = document.getElementById("fullName").value.trim();
         const memberId = document.getElementById("memberId").value.trim();
@@ -537,7 +535,7 @@
         }
     });
     
-    // ========== COMMITTEE LOGIC ==========
+    // ========== COMMITTEE LOGIC with vote details (showing member names + usernames) ==========
     async function loadAllLoansForCommittee() {
         if (!currentCommittee) return;
         const container = document.getElementById("loansContainer");
@@ -560,11 +558,11 @@
                 else if (finalStatus === "Rejected") cardClass = "rejected";
                 else if (finalStatus === "Pending Review") cardClass = "pending-review";
                 
-                let currentUserVote = votes.find(v => v.member === currentCommittee.name);
+                let currentUserVote = votes.find(v => v.username === currentCommittee.username);
                 let currentVoteVal = currentUserVote ? currentUserVote.vote : "";
                 let voteDropdown = "";
                 if (finalStatus !== "Approved" && finalStatus !== "Rejected") {
-                    voteDropdown = `<select class="status-select" data-appid="${app.id}" data-rowid="${app.id}">
+                    voteDropdown = `<select class="status-select" data-rowid="${app.id}">
                         <option value="">-- Your vote --</option>
                         <option value="Approved" ${currentVoteVal === "Approved" ? "selected" : ""}>✅ Approve</option>
                         <option value="Rejected" ${currentVoteVal === "Rejected" ? "selected" : ""}>❌ Reject</option>
@@ -573,17 +571,33 @@
                 } else {
                     voteDropdown = `<p style="margin-top:10px;"><strong>🔒 Final decision:</strong> ${finalStatus}</p>`;
                 }
+                
+                // Build detailed vote list (member name + username + vote)
+                let voteDetailsHtml = `<div class="vote-details"><strong>🗳️ Individual votes (member + ID):</strong><br>`;
+                if (votes.length === 0) {
+                    voteDetailsHtml += `<em>No votes cast yet.</em>`;
+                } else {
+                    for (let v of votes) {
+                        let memberName = v.member || "Unknown";
+                        let usernameDisplay = v.username ? `(${v.username})` : "(ID missing)";
+                        let voteEmoji = v.vote === "Approved" ? "✅" : (v.vote === "Rejected" ? "❌" : "⏳");
+                        voteDetailsHtml += `• ${memberName} ${usernameDisplay}: ${voteEmoji} ${v.vote}<br>`;
+                    }
+                }
+                voteDetailsHtml += `</div>`;
+                
                 html += `<div class="loan-card ${cardClass}">
                     <div class="flex-between"><h3>${escapeHtml(app.fullName)}</h3> <span>${app.applicationId}</span></div>
                     <p><strong>💰 Amount:</strong> ${formatMwk(app.loanAmount)} | <strong>Term:</strong> ${app.loanTerm} months</p>
                     <p><strong>📌 Type:</strong> ${app.loanType} | <strong>📞 Phone:</strong> ${app.phone}</p>
-                    <div class="vote-summary"><strong>🗳️ Committee votes:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingCount}</div>
+                    <div class="vote-summary"><strong>🗳️ Committee vote counts:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingCount}</div>
+                    ${voteDetailsHtml}
                     ${voteDropdown}
                     <p><strong>Status:</strong> <span style="font-weight:800;">${finalStatus}</span></p>
                 </div>`;
             }
             container.innerHTML = html;
-            // attach event listeners to each dynamic select
+            // attach vote event listeners
             document.querySelectorAll(".status-select").forEach(select => {
                 select.addEventListener("change", (e) => {
                     const rowId = select.getAttribute("data-rowid");
@@ -602,9 +616,15 @@
             const app = getData.application;
             let votes = [];
             try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
-            const existingIdx = votes.findIndex(v => v.member === currentCommittee.name);
-            if (existingIdx !== -1) votes[existingIdx] = { member: currentCommittee.name, vote, timestamp: new Date().toISOString() };
-            else votes.push({ member: currentCommittee.name, vote, timestamp: new Date().toISOString() });
+            const existingIdx = votes.findIndex(v => v.username === currentCommittee.username);
+            const newVoteRecord = {
+                member: currentCommittee.name,
+                username: currentCommittee.username,
+                vote: vote,
+                timestamp: new Date().toISOString()
+            };
+            if (existingIdx !== -1) votes[existingIdx] = newVoteRecord;
+            else votes.push(newVoteRecord);
             
             let approveCount = votes.filter(v => v.vote === "Approved").length;
             let rejectCount = votes.filter(v => v.vote === "Rejected").length;
@@ -647,7 +667,7 @@
         const username = document.getElementById("committeeUser").value.trim().toLowerCase();
         const pin = document.getElementById("committeePin").value;
         const member = COMMITTEE_MEMBERS.find(m => m.username === username && m.pin === pin);
-        if (!member) { showAlert("Invalid credentials. Use demo username & PIN 1234", "error"); return; }
+        if (!member) { showAlert("Invalid credentials. Use correct username and PIN (e.g., joseph / chair26)", "error"); return; }
         currentCommittee = member;
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("committeeDashboard").style.display = "block";
@@ -665,7 +685,7 @@
     });
     document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoansForCommittee(); });
     
-    console.log("✅ We Masau portal ready — Sheety + EmailJS + 3-approval voting");
+    console.log("✅ We Masau portal ready — committee members updated with correct credentials.");
 </script>
 </body>
 </html>
