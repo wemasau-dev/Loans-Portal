@@ -63,7 +63,6 @@
             margin-bottom: 32px;
             border: 1px solid #eef2f8;
             box-shadow: 0 5px 12px rgba(0,0,0,0.02);
-            transition: all 0.2s;
         }
         .form-card h2 {
             font-size: 1.65rem;
@@ -219,13 +218,16 @@
             font-weight: 700;
             margin-right: 6px;
         }
+        .vote-badge.approve { background: #28a74520; color: #1e6b3b; border-left: 3px solid #28a745; }
+        .vote-badge.reject { background: #dc354520; color: #a71d2a; border-left: 3px solid #dc3545; }
+        .vote-badge.pending { background: #ffc10720; color: #8a6d1c; border-left: 3px solid #ffc107; }
         .status-select {
             background: white;
             border-radius: 32px;
             padding: 8px 16px;
             font-weight: 500;
             margin-top: 12px;
-            width: 220px;
+            width: 200px;
             cursor: pointer;
         }
         .vote-summary {
@@ -234,16 +236,21 @@
             padding: 12px;
             margin: 12px 0;
         }
-        .vote-details {
-            background: #ffffffdd;
-            border-radius: 18px;
-            padding: 10px 14px;
-            margin-top: 10px;
+        .member-list {
             font-size: 0.85rem;
-            border: 1px solid #e9ecef;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
         }
-        .vote-details strong {
-            color: #1f5e4c;
+        .member-name {
+            background: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .flex-between {
             display: flex;
@@ -334,8 +341,8 @@
             </div>
             <div id="loginBox" class="form-card">
                 <div class="grid-2col">
-                    <div class="input-group"><label>Committee username</label><input type="text" id="committeeUser" placeholder="e.g., joseph"><small class="hint">Usernames: joseph, harry, amos, emmanuel, levie, chifundo, marvin</small></div>
-                    <div class="input-group"><label>PIN code</label><input type="password" id="committeePin" placeholder="••••••"><small class="hint">Use your assigned PIN </small></div>
+                    <div class="input-group"><label>Committee username</label><input type="text" id="committeeUser" placeholder="e.g., john.banda"><small class="hint">Demo: john.banda, mary.phiri, peter.mwale, grace.chisale, charles.dzoole</small></div>
+                    <div class="input-group"><label>PIN code</label><input type="password" id="committeePin" placeholder="••••">
                 </div>
                 <button class="btn-admin" id="committeeLoginBtn">🔐 LOGIN TO DASHBOARD</button>
             </div>
@@ -346,7 +353,7 @@
                     <div><button id="refreshLoansBtn" style="background:#e9ecef; border:none; padding:6px 20px; border-radius:30px; margin-right:12px; cursor:pointer;">⟳ Refresh</button><button id="logoutBtn" style="background:#2c5f6e; color:white; border:none; padding:6px 20px; border-radius:30px; cursor:pointer;">Logout</button></div>
                 </div>
                 <div class="form-card">
-                    <h2>📋 Pending & Active Loan Applications</h2>
+                    <h2>📋 Loan Applications – Detailed Votes</h2>
                     <div id="loansContainer">Loading applications...</div>
                 </div>
             </div>
@@ -366,16 +373,15 @@
     const EMAILJS_TEMPLATE = "template_fx0sgeh";
     emailjs.init(EMAILJS_PUBLIC);
     
-    // *** UPDATED COMMITTEE MEMBERS AS REQUESTED ***
-    const COMMITTEE_MEMBERS = [
-        { username: "joseph", name: "Joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
-        { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
-        { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
-        { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
-        { username: "levie", name: "Levie Sezza", role: "Committee Member", pin: "masau26", email: "levie.sezza@gmail.com" },
-        { username: "chifundo", name: "Chifundo Lodzeni", role: "Committee Member", pin: "masau26", email: "lodzenice@gmail.com" },
-        { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
-    ];
+    var committeeMembers = [
+    { username: "joseph", name: "Joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
+    { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
+    { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
+    { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
+    { username: "levie", name: "Levie Sezza", role: "Committee Member", pin: "masau26", email: "levie.sezza@gmail.com" },
+    { username: "chifundo", name: "Chifundo Lodzeni", role: "Committee Member", pin: "masau26", email: "lodzenice@gmail.com" },
+    { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
+];
     
     let currentCommittee = null;
     
@@ -440,7 +446,7 @@
         }).catch(e => console.warn("BCC notify failed", e));
     }
     
-    // amount term dynamic
+    // Loan amount listener
     const loanAmountInput = document.getElementById("loanAmount");
     const termBox = document.getElementById("dynamicTermBox");
     const loanTermHidden = document.getElementById("loanTermHidden");
@@ -467,7 +473,7 @@
     prefDate.min = tomorrow.toISOString().split('T')[0];
     document.getElementById("joinDate").max = new Date().toISOString().split('T')[0];
     
-    // ========== SUBMIT APPLICATION ==========
+    // SUBMIT APPLICATION
     document.getElementById("submitLoanBtn").addEventListener("click", async () => {
         const fullName = document.getElementById("fullName").value.trim();
         const memberId = document.getElementById("memberId").value.trim();
@@ -535,7 +541,7 @@
         }
     });
     
-    // ========== COMMITTEE LOGIC with vote details (showing member names + usernames) ==========
+    // ========== COMMITTEE VOTING WITH MEMBER NAMES ==========
     async function loadAllLoansForCommittee() {
         if (!currentCommittee) return;
         const container = document.getElementById("loansContainer");
@@ -549,16 +555,23 @@
             for (let app of apps) {
                 let votes = [];
                 try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
-                let approveCount = Number(app.approveCount) || 0;
-                let rejectCount = Number(app.rejectCount) || 0;
-                let pendingCount = Number(app.pendingCount) || 0;
+                
+                // Extract member names per vote type
+                const approvedBy = votes.filter(v => v.vote === "Approved").map(v => v.member);
+                const rejectedBy = votes.filter(v => v.vote === "Rejected").map(v => v.member);
+                const pendingBy = votes.filter(v => v.vote === "Pending Review").map(v => v.member);
+                
+                const approveCount = approvedBy.length;
+                const rejectCount = rejectedBy.length;
+                const pendingCount = pendingBy.length;
                 const finalStatus = app.approvalStatus || "Pending";
+                
                 let cardClass = "";
                 if (finalStatus === "Approved") cardClass = "approved";
                 else if (finalStatus === "Rejected") cardClass = "rejected";
                 else if (finalStatus === "Pending Review") cardClass = "pending-review";
                 
-                let currentUserVote = votes.find(v => v.username === currentCommittee.username);
+                let currentUserVote = votes.find(v => v.member === currentCommittee.name);
                 let currentVoteVal = currentUserVote ? currentUserVote.vote : "";
                 let voteDropdown = "";
                 if (finalStatus !== "Approved" && finalStatus !== "Rejected") {
@@ -572,26 +585,22 @@
                     voteDropdown = `<p style="margin-top:10px;"><strong>🔒 Final decision:</strong> ${finalStatus}</p>`;
                 }
                 
-                // Build detailed vote list (member name + username + vote)
-                let voteDetailsHtml = `<div class="vote-details"><strong>🗳️ Individual votes (member + ID):</strong><br>`;
-                if (votes.length === 0) {
-                    voteDetailsHtml += `<em>No votes cast yet.</em>`;
-                } else {
-                    for (let v of votes) {
-                        let memberName = v.member || "Unknown";
-                        let usernameDisplay = v.username ? `(${v.username})` : "(ID missing)";
-                        let voteEmoji = v.vote === "Approved" ? "✅" : (v.vote === "Rejected" ? "❌" : "⏳");
-                        voteDetailsHtml += `• ${memberName} ${usernameDisplay}: ${voteEmoji} ${v.vote}<br>`;
-                    }
-                }
-                voteDetailsHtml += `</div>`;
+                // Build member name lists with badges
+                const approveHtml = approvedBy.length ? `<div class="member-list">✅ <strong>Approved by:</strong> ${approvedBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
+                const rejectHtml = rejectedBy.length ? `<div class="member-list">❌ <strong>Rejected by:</strong> ${rejectedBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
+                const pendingHtml = pendingBy.length ? `<div class="member-list">⏳ <strong>Pending review by:</strong> ${pendingBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
                 
                 html += `<div class="loan-card ${cardClass}">
                     <div class="flex-between"><h3>${escapeHtml(app.fullName)}</h3> <span>${app.applicationId}</span></div>
                     <p><strong>💰 Amount:</strong> ${formatMwk(app.loanAmount)} | <strong>Term:</strong> ${app.loanTerm} months</p>
                     <p><strong>📌 Type:</strong> ${app.loanType} | <strong>📞 Phone:</strong> ${app.phone}</p>
-                    <div class="vote-summary"><strong>🗳️ Committee vote counts:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingCount}</div>
-                    ${voteDetailsHtml}
+                    <div class="vote-summary">
+                        <strong>🗳️ Vote breakdown:</strong>
+                        ${approveHtml}
+                        ${rejectHtml}
+                        ${pendingHtml}
+                        <div style="margin-top:8px;"><strong>Counts:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingCount}</div>
+                    </div>
                     ${voteDropdown}
                     <p><strong>Status:</strong> <span style="font-weight:800;">${finalStatus}</span></p>
                 </div>`;
@@ -616,15 +625,9 @@
             const app = getData.application;
             let votes = [];
             try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
-            const existingIdx = votes.findIndex(v => v.username === currentCommittee.username);
-            const newVoteRecord = {
-                member: currentCommittee.name,
-                username: currentCommittee.username,
-                vote: vote,
-                timestamp: new Date().toISOString()
-            };
-            if (existingIdx !== -1) votes[existingIdx] = newVoteRecord;
-            else votes.push(newVoteRecord);
+            const existingIdx = votes.findIndex(v => v.member === currentCommittee.name);
+            if (existingIdx !== -1) votes[existingIdx] = { member: currentCommittee.name, vote, timestamp: new Date().toISOString() };
+            else votes.push({ member: currentCommittee.name, vote, timestamp: new Date().toISOString() });
             
             let approveCount = votes.filter(v => v.vote === "Approved").length;
             let rejectCount = votes.filter(v => v.vote === "Rejected").length;
@@ -667,7 +670,7 @@
         const username = document.getElementById("committeeUser").value.trim().toLowerCase();
         const pin = document.getElementById("committeePin").value;
         const member = COMMITTEE_MEMBERS.find(m => m.username === username && m.pin === pin);
-        if (!member) { showAlert("Invalid credentials. Use correct username and PIN (e.g., joseph / chair26)", "error"); return; }
+        if (!member) { showAlert("Invalid credentials. Use demo username & PIN 1234", "error"); return; }
         currentCommittee = member;
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("committeeDashboard").style.display = "block";
@@ -685,7 +688,7 @@
     });
     document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoansForCommittee(); });
     
-    console.log("✅ We Masau portal ready — committee members updated with correct credentials.");
+    console.log("✅ We Masau portal ready — with detailed member vote display");
 </script>
 </body>
 </html>
