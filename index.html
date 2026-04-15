@@ -5,269 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>WE MASAU SACCO | Loan Application & Committee Portal</title>
     
-    <!-- Google Fonts & EmailJS SDK -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(145deg, #0b2b2c 0%, #123f3f 100%);
-            min-height: 100vh;
-            padding: 28px 20px;
-        }
-
-        .main-container {
-            max-width: 1480px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 40px;
-            overflow: hidden;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35);
-        }
-
-        .hero {
-            background: linear-gradient(115deg, #0c4e3b 0%, #1c6d5e 100%);
-            padding: 36px 32px;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #FFF6E0 0%, #e2f3e9 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 6px;
-        }
-        .hero p {
-            color: #e0f2ea;
-            font-weight: 500;
-        }
-
-        .content-padding {
-            padding: 32px 44px 44px;
-        }
-
-        .form-card {
-            background: #fefefe;
-            border-radius: 28px;
-            padding: 28px 34px;
-            margin-bottom: 32px;
-            border: 1px solid #eef2f8;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
-        }
-        .form-card h2 {
-            font-size: 1.65rem;
-            font-weight: 700;
-            color: #1a3a2f;
-            border-left: 5px solid #2c8c6e;
-            padding-left: 18px;
-            margin-bottom: 28px;
-        }
-        .grid-2col {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-            gap: 24px 36px;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .input-group label {
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #2d4f42;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .required-star {
-            color: #e05a5a;
-            font-size: 1.2rem;
-            margin-left: 4px;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #e2e9f0;
-            border-radius: 20px;
-            font-family: 'Inter', monospace;
-            font-size: 0.95rem;
-            transition: 0.2s;
-            background: white;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #2c8c6e;
-            box-shadow: 0 0 0 3px rgba(44,140,110,0.12);
-        }
-        .term-badge {
-            background: #e9f6f1;
-            border-radius: 18px;
-            padding: 12px 14px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #1f5e4c;
-            border-left: 4px solid #2c8c6e;
-        }
-        .btn-primary, .btn-admin {
-            background: linear-gradient(100deg, #1b6e58 0%, #0f4f3f 100%);
-            border: none;
-            padding: 16px 24px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            border-radius: 44px;
-            color: white;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.25s;
-            margin-top: 8px;
-        }
-        .btn-admin {
-            background: linear-gradient(100deg, #2a5f7a 0%, #16435a 100%);
-        }
-        .btn-primary:hover, .btn-admin:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.02);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
-        }
-        .alert-banner {
-            padding: 14px 20px;
-            border-radius: 28px;
-            margin-bottom: 24px;
-            display: none;
-            font-weight: 500;
-        }
-        .alert-success {
-            background: #daf5e4;
-            color: #0a5e3a;
-            border-left: 6px solid #2c8c6e;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .alert-error {
-            background: #ffe6e5;
-            color: #b13b3b;
-            border-left: 6px solid #dc3545;
-        }
-        .alert-info {
-            background: #e2f0fd;
-            color: #1e5a7a;
-            border-left: 6px solid #17a2b8;
-        }
-        .spinner-overlay {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .spinner {
-            border: 3px solid #eef2f5;
-            border-top: 3px solid #2c8c6e;
-            border-radius: 50%;
-            width: 42px;
-            height: 42px;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(145deg, #0b2b2c 0%, #123f3f 100%); min-height: 100vh; padding: 28px 20px; }
+        .main-container { max-width: 1480px; margin: 0 auto; background: #ffffff; border-radius: 40px; overflow: hidden; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35); }
+        .hero { background: linear-gradient(115deg, #0c4e3b 0%, #1c6d5e 100%); padding: 36px 32px; text-align: center; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, #FFF6E0 0%, #e2f3e9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
+        .hero p { color: #e0f2ea; font-weight: 500; }
+        .content-padding { padding: 32px 44px 44px; }
+        .form-card { background: #fefefe; border-radius: 28px; padding: 28px 34px; margin-bottom: 32px; border: 1px solid #eef2f8; box-shadow: 0 5px 12px rgba(0,0,0,0.02); }
+        .form-card h2 { font-size: 1.65rem; font-weight: 700; color: #1a3a2f; border-left: 5px solid #2c8c6e; padding-left: 18px; margin-bottom: 28px; }
+        .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 24px 36px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #2d4f42; letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px; }
+        .required-star { color: #e05a5a; font-size: 1.2rem; margin-left: 4px; }
+        input, select, textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e9f0; border-radius: 20px; font-family: 'Inter', monospace; font-size: 0.95rem; transition: 0.2s; background: white; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #2c8c6e; box-shadow: 0 0 0 3px rgba(44,140,110,0.12); }
+        .term-badge { background: #e9f6f1; border-radius: 18px; padding: 12px 14px; font-size: 0.9rem; font-weight: 500; color: #1f5e4c; border-left: 4px solid #2c8c6e; }
+        .btn-primary, .btn-admin { background: linear-gradient(100deg, #1b6e58 0%, #0f4f3f 100%); border: none; padding: 16px 24px; font-size: 1.05rem; font-weight: 700; border-radius: 44px; color: white; width: 100%; cursor: pointer; transition: all 0.25s; margin-top: 8px; }
+        .btn-admin { background: linear-gradient(100deg, #2a5f7a 0%, #16435a 100%); }
+        .btn-primary:hover, .btn-admin:hover { transform: translateY(-2px); filter: brightness(1.02); box-shadow: 0 8px 18px rgba(0,0,0,0.1); }
+        .alert-banner { padding: 14px 20px; border-radius: 28px; margin-bottom: 24px; display: none; font-weight: 500; }
+        .alert-success { background: #daf5e4; color: #0a5e3a; border-left: 6px solid #2c8c6e; display: flex; align-items: center; gap: 12px; }
+        .alert-error { background: #ffe6e5; color: #b13b3b; border-left: 6px solid #dc3545; }
+        .alert-info { background: #e2f0fd; color: #1e5a7a; border-left: 6px solid #17a2b8; }
+        .spinner-overlay { display: none; text-align: center; margin: 20px 0; }
+        .spinner { border: 3px solid #eef2f5; border-top: 3px solid #2c8c6e; border-radius: 50%; width: 42px; height: 42px; animation: spin 0.8s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        hr {
-            margin: 28px 0;
-            border: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #cbe5dc, transparent);
-        }
-        .committee-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            background: #f1f8f5;
-            padding: 14px 24px;
-            border-radius: 48px;
-        }
-        .loan-card {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 22px;
-            margin-bottom: 22px;
-            border: 1px solid #eef0f2;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-        }
+        hr { margin: 28px 0; border: 0; height: 2px; background: linear-gradient(90deg, #cbe5dc, transparent); }
+        .committee-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; background: #f1f8f5; padding: 14px 24px; border-radius: 48px; }
+        .loan-card { background: #ffffff; border-radius: 28px; padding: 22px; margin-bottom: 22px; border: 1px solid #eef0f2; transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
         .loan-card.approved { background: linear-gradient(120deg, #e0f7ea, #caf0db); border-left: 7px solid #28a745; }
         .loan-card.rejected { background: linear-gradient(120deg, #ffe6e5, #ffdedc); border-left: 7px solid #dc3545; }
         .loan-card.pending-review { background: linear-gradient(120deg, #fff5df, #ffefcf); border-left: 7px solid #ffc107; }
-        .vote-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-right: 6px;
-        }
+        .vote-badge { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: 700; margin-right: 6px; }
         .vote-badge.approve { background: #28a74520; color: #1e6b3b; border-left: 3px solid #28a745; }
         .vote-badge.reject { background: #dc354520; color: #a71d2a; border-left: 3px solid #dc3545; }
         .vote-badge.pending { background: #ffc10720; color: #8a6d1c; border-left: 3px solid #ffc107; }
-        .status-select {
-            background: white;
-            border-radius: 32px;
-            padding: 8px 16px;
-            font-weight: 500;
-            margin-top: 12px;
-            width: 200px;
-            cursor: pointer;
-        }
-        .vote-summary {
-            background: #f6f9fc;
-            border-radius: 20px;
-            padding: 12px;
-            margin: 12px 0;
-        }
-        .member-list {
-            font-size: 0.85rem;
-            margin-top: 6px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-        .member-name {
-            background: white;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.75rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        @media (max-width: 780px) {
-            .content-padding { padding: 20px; }
-            .form-card { padding: 20px; }
-        }
-        small.hint {
-            color: #6c8d82;
-            font-size: 0.7rem;
-            margin-top: 5px;
-            display: block;
-        }
+        .status-select { background: white; border-radius: 32px; padding: 8px 16px; font-weight: 500; margin-top: 12px; width: 200px; cursor: pointer; }
+        .vote-summary { background: #f6f9fc; border-radius: 20px; padding: 12px; margin: 12px 0; }
+        .member-list { font-size: 0.85rem; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .member-name { background: white; padding: 3px 10px; border-radius: 20px; font-weight: 500; font-size: 0.75rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        @media (max-width: 780px) { .content-padding { padding: 20px; } .form-card { padding: 20px; } }
+        small.hint { color: #6c8d82; font-size: 0.7rem; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
@@ -279,7 +63,7 @@
     <div class="content-padding">
         <div id="globalAlert" class="alert-banner"></div>
 
-        <!-- ========== APPLICANT FORM ========== -->
+        <!-- APPLICANT FORM (unchanged) -->
         <form id="applicantForm">
             <div class="form-card">
                 <h2>👤 Member Profile</h2>
@@ -292,7 +76,6 @@
                     <div class="input-group"><label>Membership status</label><select id="membershipStatus"><option value="Active">✅ Active</option><option value="Inactive">⚠️ Inactive</option></select></div>
                 </div>
             </div>
-
             <div class="form-card">
                 <h2>💰 Loan Details</h2>
                 <div class="grid-2col">
@@ -305,7 +88,6 @@
                     <div class="input-group full-width"><label>Loan purpose <span class="required-star">*</span></label><textarea id="purpose" rows="2" placeholder="Explain how funds will be used..."></textarea></div>
                 </div>
             </div>
-
             <div class="form-card">
                 <h2>📊 Financial Health</h2>
                 <div class="grid-2col">
@@ -317,7 +99,6 @@
                     <div class="input-group"><label>Existing loans?</label><select id="existingLoans"><option value="No">No</option><option value="Yes">Yes</option></select></div>
                 </div>
             </div>
-
             <div class="form-card">
                 <h2>🤝 Guarantors (2 required)</h2>
                 <div class="grid-2col">
@@ -333,7 +114,7 @@
 
         <hr>
 
-        <!-- ========== COMMITTEE PORTAL ========== -->
+        <!-- COMMITTEE PORTAL (credentials hints removed) -->
         <div style="margin-top: 20px;">
             <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
                 <h2 style="background: linear-gradient(105deg,#2a5f7a,#16435a); padding: 8px 30px; border-radius: 50px; color: white;">🏛️ COMMITTEE VOTING PORTAL</h2>
@@ -341,8 +122,16 @@
             </div>
             <div id="loginBox" class="form-card">
                 <div class="grid-2col">
-                    <div class="input-group"><label>Committee username</label><input type="text" id="committeeUser" placeholder="e.g., john.banda"><small class="hint">Demo: john, mary, peter, grace, charles</small></div>
-                    <div class="input-group"><label>PIN code</label><input type="password" id="committeePin" placeholder="••••••••">
+                    <div class="input-group">
+                        <label>Committee username</label>
+                        <input type="text" id="committeeUser" placeholder="Enter your username">
+                        <!-- Hints removed for security -->
+                    </div>
+                    <div class="input-group">
+                        <label>PIN code</label>
+                        <input type="password" id="committeePin" placeholder="••••">
+                        <!-- Hints removed -->
+                    </div>
                 </div>
                 <button class="btn-admin" id="committeeLoginBtn">🔐 LOGIN TO DASHBOARD</button>
             </div>
@@ -362,9 +151,25 @@
 </div>
 
 <script>
-    // -------------------------------
-    // 1. CONFIGURATION
-    // -------------------------------
+    // ============================================================
+    // 1. COMMITTEE MEMBERS – EDIT THIS ARRAY TO CHANGE CREDENTIALS
+    // ============================================================
+    const COMMITTEE_MEMBERS = [
+        { username: "joseph", name: "joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
+        { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
+        { username: "Amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
+        { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
+        { username: "levie", name: "Levie Sezza", role: "Member", pin: "masau26", email: "levie.sezza@gmail.com" }
+        { username: "chifundo", name: "Chifundo Lodzeni", role: "Member", pin: "masau26", email: "lodzenice@gmail.com" }
+        { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
+
+    ];
+    // -----------------------------------------------------------------
+    // To add/remove members: edit the list above.
+    // Each member must have: username, name, role, pin, email.
+    // After editing, save the file. No other changes needed.
+    // -----------------------------------------------------------------
+
     const SHEETY_API = "https://api.sheety.co/3ac95be1e7d1588ffe19f585e744f83a/weMasauLoanApplications/applications";
     const SHEET_OBJ = "applications";
     
@@ -372,16 +177,6 @@
     const EMAILJS_SERVICE = "service_dnj10br";
     const EMAILJS_TEMPLATE = "template_fx0sgeh";
     emailjs.init(EMAILJS_PUBLIC);
-    
-    var committeeMembers = [
-    { username: "joseph", name: "Joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
-    { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
-    { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
-    { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
-    { username: "levie", name: "Levie Sezza", role: "Committee Member", pin: "masau26", email: "levie.sezza@gmail.com" },
-    { username: "chifundo", name: "Chifundo Lodzeni", role: "Committee Member", pin: "masau26", email: "lodzenice@gmail.com" },
-    { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
-];
     
     let currentCommittee = null;
     
@@ -541,7 +336,7 @@
         }
     });
     
-    // ========== COMMITTEE VOTING WITH MEMBER NAMES ==========
+    // COMMITTEE VOTING WITH MEMBER NAMES
     async function loadAllLoansForCommittee() {
         if (!currentCommittee) return;
         const container = document.getElementById("loansContainer");
@@ -556,7 +351,6 @@
                 let votes = [];
                 try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
                 
-                // Extract member names per vote type
                 const approvedBy = votes.filter(v => v.vote === "Approved").map(v => v.member);
                 const rejectedBy = votes.filter(v => v.vote === "Rejected").map(v => v.member);
                 const pendingBy = votes.filter(v => v.vote === "Pending Review").map(v => v.member);
@@ -585,7 +379,6 @@
                     voteDropdown = `<p style="margin-top:10px;"><strong>🔒 Final decision:</strong> ${finalStatus}</p>`;
                 }
                 
-                // Build member name lists with badges
                 const approveHtml = approvedBy.length ? `<div class="member-list">✅ <strong>Approved by:</strong> ${approvedBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
                 const rejectHtml = rejectedBy.length ? `<div class="member-list">❌ <strong>Rejected by:</strong> ${rejectedBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
                 const pendingHtml = pendingBy.length ? `<div class="member-list">⏳ <strong>Pending review by:</strong> ${pendingBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
@@ -606,7 +399,6 @@
                 </div>`;
             }
             container.innerHTML = html;
-            // attach vote event listeners
             document.querySelectorAll(".status-select").forEach(select => {
                 select.addEventListener("change", (e) => {
                     const rowId = select.getAttribute("data-rowid");
@@ -665,12 +457,12 @@
     
     function escapeHtml(str) { if(!str) return ""; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     
-    // login / logout
+    // LOGIN / LOGOUT
     document.getElementById("committeeLoginBtn").addEventListener("click", () => {
         const username = document.getElementById("committeeUser").value.trim().toLowerCase();
         const pin = document.getElementById("committeePin").value;
         const member = COMMITTEE_MEMBERS.find(m => m.username === username && m.pin === pin);
-        if (!member) { showAlert("Invalid credentials. Use demo username & PIN 1234", "error"); return; }
+        if (!member) { showAlert("Invalid credentials. Please contact administrator.", "error"); return; }
         currentCommittee = member;
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("committeeDashboard").style.display = "block";
@@ -688,7 +480,7 @@
     });
     document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoansForCommittee(); });
     
-    console.log("✅ We Masau portal ready — with detailed member vote display");
+    console.log("✅ We Masau portal ready – credentials hidden, committee editable.");
 </script>
 </body>
 </html>
