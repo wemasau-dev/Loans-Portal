@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>WE MASAU SACCO | Loan Application & Committee Portal</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
+    <title>WE MASAU SACCO | Secure Loan Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* === YOUR EXISTING STYLES (unchanged, keep as in original) === */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: linear-gradient(145deg, #0b2b2c 0%, #123f3f 100%); min-height: 100vh; padding: 28px 20px; }
         .main-container { max-width: 1480px; margin: 0 auto; background: #ffffff; border-radius: 40px; overflow: hidden; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35); }
         .hero { background: linear-gradient(115deg, #0c4e3b 0%, #1c6d5e 100%); padding: 36px 32px; text-align: center; }
-        .hero h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, #FFF6E0 0%, #e2f3e9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #FFF6E0 0%, #e2f3e9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
         .hero p { color: #e0f2ea; font-weight: 500; }
         .content-padding { padding: 32px 44px 44px; }
         .form-card { background: #fefefe; border-radius: 28px; padding: 28px 34px; margin-bottom: 32px; border: 1px solid #eef2f8; box-shadow: 0 5px 12px rgba(0,0,0,0.02); }
         .form-card h2 { font-size: 1.65rem; font-weight: 700; color: #1a3a2f; border-left: 5px solid #2c8c6e; padding-left: 18px; margin-bottom: 28px; }
         .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 24px 36px; }
         .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #2d4f42; letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px; }
+        .input-group label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #2d4f42; letter-spacing: 0.3px; }
         .required-star { color: #e05a5a; font-size: 1.2rem; margin-left: 4px; }
         input, select, textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e9f0; border-radius: 20px; font-family: 'Inter', monospace; font-size: 0.95rem; transition: 0.2s; background: white; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: #2c8c6e; box-shadow: 0 0 0 3px rgba(44,140,110,0.12); }
@@ -52,6 +50,7 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         @media (max-width: 780px) { .content-padding { padding: 20px; } .form-card { padding: 20px; } }
         small.hint { color: #6c8d82; font-size: 0.7rem; margin-top: 5px; display: block; }
+        .security-note { background: #fff3cd; border-left: 6px solid #ffc107; padding: 12px 20px; border-radius: 28px; margin-bottom: 24px; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -61,9 +60,12 @@
         <p>Apply for micro-loans · Committee endorsement · 3 approvals required</p>
     </div>
     <div class="content-padding">
+        <div class="security-note">
+            🔐 <strong>Secure portal</strong> – All committee credentials and API keys are stored on a backend proxy (Google Apps Script). No secrets are exposed in your browser.
+        </div>
         <div id="globalAlert" class="alert-banner"></div>
 
-        <!-- APPLICANT FORM (unchanged) -->
+        <!-- APPLICANT FORM (improved) -->
         <form id="applicantForm">
             <div class="form-card">
                 <h2>👤 Member Profile</h2>
@@ -81,7 +83,7 @@
                 <div class="grid-2col">
                     <div class="input-group"><label>Loan type</label><select id="loanType"><option value="">-- Select --</option><option value="Emergency">🚨 Emergency</option><option value="Education">📚 Education</option><option value="Business">💼 Business</option><option value="Agriculture">🌾 Agriculture</option><option value="Home Improvement">🏠 Home Improvement</option><option value="Other">📝 Other</option></select></div>
                     <div id="otherLoanTypeGroup" style="display: none;"><div class="input-group"><label>Specify other</label><input type="text" id="otherLoanTypeInput" placeholder="Describe loan type"></div></div>
-                    <div class="input-group"><label>Loan amount (MWK) <span class="required-star">*</span></label><input type="number" id="loanAmount" step="1000" placeholder="e.g., 500000"></div>
+                    <div class="input-group"><label>Loan amount (MWK) <span class="required-star">*</span></label><input type="number" id="loanAmount" step="1000" max="3000000" placeholder="e.g., 500000"></div>
                     <div class="input-group"><label>Repayment method</label><select id="repaymentMethod"><option value="">-- Select --</option><option value="Monthly_salary">📅 Monthly (salary deduction)</option><option value="Monthly_agri">📅 Monthly (Agricultural)</option><option value="Monthly_other">📅 Monthly (Other)</option></select></div>
                     <div class="input-group"><label>Preferred disbursement date <span class="required-star">*</span></label><input type="date" id="preferredDisbursementDate"><small class="hint">Minimum tomorrow</small></div>
                     <div class="input-group"><label>Available term (auto-calculated)</label><div id="dynamicTermBox" class="term-badge">💡 Enter loan amount to see term</div><input type="hidden" id="loanTermHidden"></div>
@@ -114,7 +116,7 @@
 
         <hr>
 
-        <!-- COMMITTEE PORTAL (credentials hints removed) -->
+        <!-- COMMITTEE PORTAL -->
         <div style="margin-top: 20px;">
             <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
                 <h2 style="background: linear-gradient(105deg,#2a5f7a,#16435a); padding: 8px 30px; border-radius: 50px; color: white;">🏛️ COMMITTEE VOTING PORTAL</h2>
@@ -125,12 +127,10 @@
                     <div class="input-group">
                         <label>Committee username</label>
                         <input type="text" id="committeeUser" placeholder="Enter your username">
-                        <!-- Hints removed for security -->
                     </div>
                     <div class="input-group">
                         <label>PIN code</label>
                         <input type="password" id="committeePin" placeholder="••••">
-                        <!-- Hints removed -->
                     </div>
                 </div>
                 <button class="btn-admin" id="committeeLoginBtn">🔐 LOGIN TO DASHBOARD</button>
@@ -152,33 +152,22 @@
 
 <script>
     // ============================================================
-    // 1. COMMITTEE MEMBERS – EDIT THIS ARRAY TO CHANGE CREDENTIALS
+    // BACKEND PROXY URL (replace with your Google Apps Script web app URL)
     // ============================================================
-    const COMMITTEE_MEMBERS = [
-        { username: "joseph", name: "joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
-        { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
-        { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
-        { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
-        { username: "levie", name: "Levie Sezza", role: "Member", pin: "masau26", email: "levie.sezza@gmail.com" },
-        { username: "chifundo", name: "Chifundo Lodzeni", role: "Member", pin: "masau26", email: "lodzenice@gmail.com" },
-        { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
-    ];
-    // -----------------------------------------------------------------
-    // To add/remove members: edit the list above.
-    // Each member must have: username, name, role, pin, email.
-    // After editing, save the file. No other changes needed.
-    // -----------------------------------------------------------------
+    const PROXY_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";  // <-- UPDATE THIS
 
-    const SHEETY_API = "https://api.sheety.co/3ac95be1e7d1588ffe19f585e744f83a/weMasauLoanApplications/applications";
-    const SHEET_OBJ = "applications";
-    
-    const EMAILJS_PUBLIC = "g36wnJhl9MeP65N7H";
-    const EMAILJS_SERVICE = "service_dnj10br";
-    const EMAILJS_TEMPLATE = "template_fx0sgeh";
-    emailjs.init(EMAILJS_PUBLIC);
-    
-    let currentCommittee = null;
-    
+    // Helper functions
+    function showAlert(message, type = "info") {
+        const alertDiv = document.getElementById("globalAlert");
+        alertDiv.className = `alert-banner alert-${type}`;
+        alertDiv.innerHTML = message;
+        alertDiv.style.display = "flex";
+        setTimeout(() => { alertDiv.style.display = "none"; }, 5000);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function formatMwk(amount) { return "MWK " + Number(amount).toLocaleString(); }
+
     const TERM_BRACKETS = [
         { max: 250999, termMonths: "1", display: "1 month" },
         { max: 600999, termMonths: "2", display: "2 months" },
@@ -188,86 +177,56 @@
         { max: 2000999, termMonths: "4.5", display: "4.5 months" },
         { max: 3000000, termMonths: "5", display: "5 months" }
     ];
-    
+
     function getTermByAmount(amount) {
         if (!amount || amount <= 0) return null;
         for (let b of TERM_BRACKETS) if (amount <= b.max) return b;
         return null;
     }
-    
-    function formatMwk(amount) { return "MWK " + Number(amount).toLocaleString(); }
-    
-    function showAlert(message, type = "info") {
-        const alertDiv = document.getElementById("globalAlert");
-        alertDiv.className = `alert-banner alert-${type}`;
-        alertDiv.innerHTML = message;
-        alertDiv.style.display = "flex";
-        setTimeout(() => { alertDiv.style.display = "none"; }, 5000);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    
-    function sendApplicantEmail(applicantEmail, fullName, appId, amount, statusMsg) {
-        let bodyMsg = "";
-        if (statusMsg === "Received") bodyMsg = `Dear ${fullName},\n\nYour loan application (${appId}) has been received successfully. Our committee will review and you'll be notified. Thank you for trusting We Masau.`;
-        else if (statusMsg === "Approved") bodyMsg = `Congratulations ${fullName}! Your loan of ${formatMwk(amount)} has been APPROVED. Funds will be disbursed within 2-3 working days.`;
-        else if (statusMsg === "Rejected") bodyMsg = `Dear ${fullName}, your loan application (${appId}) was not approved. Please contact SACCO admin for clarification.`;
-        else bodyMsg = `Your application ${appId} status update: ${statusMsg}.`;
-        
-        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-            to_email: applicantEmail,
-            name: fullName,
-            message: bodyMsg,
-            application_id: appId,
-            loan_amount: formatMwk(amount),
-            submission_date: new Date().toLocaleString(),
-            from_name: "We Masau Loan Committee"
-        }).then(() => console.log(`Email to ${applicantEmail} sent`)).catch(e => console.warn("EmailJS err", e));
-    }
-    
-    function notifyAllCommitteeBCC(applicantData) {
-        const allEmails = COMMITTEE_MEMBERS.map(m => m.email).join(",");
-        const firstChairEmail = COMMITTEE_MEMBERS[0].email;
-        const messageBody = `🔔 NEW LOAN APPLICATION\nApplicant: ${applicantData.fullName}\nID: ${applicantData.memberId}\nAmount: ${formatMwk(applicantData.loanAmount)}\nType: ${applicantData.loanType}\nPurpose: ${applicantData.purpose}\n\nLogin to committee portal to cast your vote. 3 approvals required.`;
-        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-            to_email: firstChairEmail,
-            bcc_email: allEmails,
-            name: "Committee Members",
-            message: messageBody,
-            application_id: applicantData.applicationId,
-            loan_amount: formatMwk(applicantData.loanAmount),
-            submission_date: new Date().toLocaleString(),
-            from_name: "We Masau System"
-        }).catch(e => console.warn("BCC notify failed", e));
-    }
-    
-    // Loan amount listener
+
+    // Loan amount listener with max check
     const loanAmountInput = document.getElementById("loanAmount");
     const termBox = document.getElementById("dynamicTermBox");
     const loanTermHidden = document.getElementById("loanTermHidden");
     loanAmountInput.addEventListener("input", () => {
         let amount = parseFloat(loanAmountInput.value);
+        if (amount > 3000000) {
+            termBox.innerHTML = "❌ Loan amount cannot exceed MWK 3,000,000.";
+            loanTermHidden.value = "";
+            return;
+        }
         let bracket = getTermByAmount(amount);
         if (bracket && amount > 0) {
             termBox.innerHTML = `✅ Approved term: ${bracket.display} (repayment period)`;
             loanTermHidden.value = bracket.termMonths;
         } else {
-            termBox.innerHTML = "⚠️ Enter valid loan amount (max MWK 3,000,000)";
+            termBox.innerHTML = "⚠️ Enter valid loan amount (MWK 1,000 – 3,000,000)";
             loanTermHidden.value = "";
         }
     });
-    
+
+    // Other loan type clearing
     const loanTypeSelect = document.getElementById("loanType");
     const otherGroup = document.getElementById("otherLoanTypeGroup");
+    const otherLoanTypeInput = document.getElementById("otherLoanTypeInput");
     loanTypeSelect.addEventListener("change", () => {
-        otherGroup.style.display = loanTypeSelect.value === "Other" ? "block" : "none";
+        const isOther = loanTypeSelect.value === "Other";
+        otherGroup.style.display = isOther ? "block" : "none";
+        if (!isOther) otherLoanTypeInput.value = "";
     });
-    
+
+    // Date constraints
     const prefDate = document.getElementById("preferredDisbursementDate");
     const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
     prefDate.min = tomorrow.toISOString().split('T')[0];
     document.getElementById("joinDate").max = new Date().toISOString().split('T')[0];
-    
-    // SUBMIT APPLICATION
+
+    // Phone validation
+    function isValidPhone(phone) {
+        return /^[0-9+\-\s]{8,15}$/.test(phone);
+    }
+
+    // Submit application via proxy
     document.getElementById("submitLoanBtn").addEventListener("click", async () => {
         const fullName = document.getElementById("fullName").value.trim();
         const memberId = document.getElementById("memberId").value.trim();
@@ -276,7 +235,7 @@
         const joinDate = document.getElementById("joinDate").value;
         const membershipStatus = document.getElementById("membershipStatus").value;
         let loanType = loanTypeSelect.value;
-        if (loanType === "Other") loanType = `Other: ${document.getElementById("otherLoanTypeInput").value.trim() || "Not specified"}`;
+        if (loanType === "Other") loanType = `Other: ${otherLoanTypeInput.value.trim() || "Not specified"}`;
         const loanAmount = parseFloat(loanAmountInput.value);
         const loanTerm = loanTermHidden.value;
         const repaymentMethod = document.getElementById("repaymentMethod").value;
@@ -292,13 +251,17 @@
         const guarantor1Phone = document.getElementById("guarantor1Phone").value.trim();
         const guarantor2Name = document.getElementById("guarantor2Name").value.trim();
         const guarantor2Phone = document.getElementById("guarantor2Phone").value.trim();
-        
+
         if (!fullName || !memberId || !email || !phone || !joinDate || !loanAmount || loanAmount <= 0 || !prefDisbursement || !purpose || !guarantor1Name || !guarantor2Name) {
             showAlert("Please fill all required fields (*): full name, member ID, email, phone, join date, loan amount, disbursement date, purpose, and both guarantors.", "error");
             return;
         }
         if (!loanTerm) { showAlert("Loan amount must be between MWK 1,000 and MWK 3,000,000 to determine valid term.", "error"); return; }
-        
+        if (!isValidPhone(phone) || !isValidPhone(guarantor1Phone) || !isValidPhone(guarantor2Phone)) {
+            showAlert("Please enter valid phone numbers (digits, spaces, +, - only, 8-15 chars).", "error");
+            return;
+        }
+
         const applicationId = "WM-" + Date.now().toString(36).toUpperCase() + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
         const newApp = {
             timestamp: new Date().toISOString(),
@@ -308,21 +271,20 @@
             existingBalance: "0", guarantor1Name, guarantor1Phone, guarantor2Name, guarantor2Phone,
             approvalStatus: "Pending", votes: "[]", approveCount: 0, rejectCount: 0, pendingCount: 0, lastVoteBy: "", lastVoteDate: ""
         };
-        
+
         const btn = document.getElementById("submitLoanBtn");
         const spinner = document.getElementById("formSpinner");
         btn.disabled = true; spinner.style.display = "block";
-        
+
         try {
-            const response = await fetch(SHEETY_API, {
+            const response = await fetch(PROXY_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ application: newApp })
+                body: JSON.stringify({ action: "submitApplication", application: newApp })
             });
-            if (!response.ok) throw new Error("Sheety error");
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error || "Submission failed");
             showAlert(`✅ Application submitted! ID: ${applicationId}. Committee will review.`, "success");
-            sendApplicantEmail(email, fullName, applicationId, loanAmount, "Received");
-            notifyAllCommitteeBCC({ fullName, memberId, loanAmount, loanType, purpose, applicationId });
             document.getElementById("applicantForm").reset();
             termBox.innerHTML = "💡 Enter loan amount to see term";
             loanTermHidden.value = "";
@@ -334,36 +296,61 @@
             spinner.style.display = "none";
         }
     });
-    
-    // COMMITTEE VOTING WITH MEMBER NAMES
-    async function loadAllLoansForCommittee() {
+
+    // Committee state
+    let currentCommittee = null;
+
+    // Login via proxy
+    document.getElementById("committeeLoginBtn").addEventListener("click", async () => {
+        const username = document.getElementById("committeeUser").value.trim().toLowerCase();
+        const pin = document.getElementById("committeePin").value;
+        try {
+            const resp = await fetch(PROXY_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "login", username, pin })
+            });
+            const data = await resp.json();
+            if (!data.success) throw new Error(data.error);
+            currentCommittee = data.member;
+            document.getElementById("loginBox").style.display = "none";
+            document.getElementById("committeeDashboard").style.display = "block";
+            document.getElementById("dashboardUserName").innerText = currentCommittee.name;
+            document.getElementById("dashboardUserRole").innerText = currentCommittee.role;
+            loadAllLoans();
+        } catch (err) {
+            showAlert("Login failed: " + err.message, "error");
+        }
+    });
+
+    async function loadAllLoans() {
         if (!currentCommittee) return;
         const container = document.getElementById("loansContainer");
         container.innerHTML = '<div class="spinner"></div><p>Loading loans...</p>';
         try {
-            const resp = await fetch(SHEETY_API);
+            const resp = await fetch(PROXY_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "getApplications", memberName: currentCommittee.name })
+            });
             const data = await resp.json();
-            let apps = data[SHEET_OBJ] || [];
+            if (!data.success) throw new Error(data.error);
+            let apps = data.applications;
             if (apps.length === 0) { container.innerHTML = "<p>No loan applications yet.</p>"; return; }
             let html = "";
             for (let app of apps) {
-                let votes = [];
-                try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
-                
+                let votes = app.votesArray || [];
                 const approvedBy = votes.filter(v => v.vote === "Approved").map(v => v.member);
                 const rejectedBy = votes.filter(v => v.vote === "Rejected").map(v => v.member);
                 const pendingBy = votes.filter(v => v.vote === "Pending Review").map(v => v.member);
-                
                 const approveCount = approvedBy.length;
                 const rejectCount = rejectedBy.length;
-                const pendingCount = pendingBy.length;
-                const finalStatus = app.approvalStatus || "Pending";
-                
+                const finalStatus = app.approvalStatus;
                 let cardClass = "";
                 if (finalStatus === "Approved") cardClass = "approved";
                 else if (finalStatus === "Rejected") cardClass = "rejected";
                 else if (finalStatus === "Pending Review") cardClass = "pending-review";
-                
+
                 let currentUserVote = votes.find(v => v.member === currentCommittee.name);
                 let currentVoteVal = currentUserVote ? currentUserVote.vote : "";
                 let voteDropdown = "";
@@ -377,11 +364,11 @@
                 } else {
                     voteDropdown = `<p style="margin-top:10px;"><strong>🔒 Final decision:</strong> ${finalStatus}</p>`;
                 }
-                
+
                 const approveHtml = approvedBy.length ? `<div class="member-list">✅ <strong>Approved by:</strong> ${approvedBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
                 const rejectHtml = rejectedBy.length ? `<div class="member-list">❌ <strong>Rejected by:</strong> ${rejectedBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
                 const pendingHtml = pendingBy.length ? `<div class="member-list">⏳ <strong>Pending review by:</strong> ${pendingBy.map(n => `<span class="member-name">${escapeHtml(n)}</span>`).join('')}</div>` : '';
-                
+
                 html += `<div class="loan-card ${cardClass}">
                     <div class="flex-between"><h3>${escapeHtml(app.fullName)}</h3> <span>${app.applicationId}</span></div>
                     <p><strong>💰 Amount:</strong> ${formatMwk(app.loanAmount)} | <strong>Term:</strong> ${app.loanTerm} months</p>
@@ -391,7 +378,7 @@
                         ${approveHtml}
                         ${rejectHtml}
                         ${pendingHtml}
-                        <div style="margin-top:8px;"><strong>Counts:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingCount}</div>
+                        <div style="margin-top:8px;"><strong>Counts:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingBy.length}</div>
                     </div>
                     ${voteDropdown}
                     <p><strong>Status:</strong> <span style="font-weight:800;">${finalStatus}</span></p>
@@ -402,73 +389,31 @@
                 select.addEventListener("change", (e) => {
                     const rowId = select.getAttribute("data-rowid");
                     const voteValue = select.value;
-                    if (voteValue) castVoteOnLoan(rowId, voteValue);
+                    if (voteValue) castVote(rowId, voteValue);
                 });
             });
         } catch(err) { container.innerHTML = `<p>Error loading data: ${err.message}</p>`; }
     }
-    
-    async function castVoteOnLoan(rowId, vote) {
+
+    async function castVote(rowId, vote) {
         if (!currentCommittee) return;
         try {
-            const getResp = await fetch(`${SHEETY_API}/${rowId}`);
-            const getData = await getResp.json();
-            const app = getData.application;
-            let votes = [];
-            try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
-            const existingIdx = votes.findIndex(v => v.member === currentCommittee.name);
-            if (existingIdx !== -1) votes[existingIdx] = { member: currentCommittee.name, vote, timestamp: new Date().toISOString() };
-            else votes.push({ member: currentCommittee.name, vote, timestamp: new Date().toISOString() });
-            
-            let approveCount = votes.filter(v => v.vote === "Approved").length;
-            let rejectCount = votes.filter(v => v.vote === "Rejected").length;
-            let pendingCount = votes.filter(v => v.vote === "Pending Review").length;
-            let finalStatus = "Pending";
-            if (approveCount >= 3) finalStatus = "Approved";
-            else if (rejectCount >= 3) finalStatus = "Rejected";
-            else if (pendingCount >= 3) finalStatus = "Pending Review";
-            
-            const updatePayload = {
-                application: {
-                    votes: JSON.stringify(votes),
-                    approveCount, rejectCount, pendingCount,
-                    approvalStatus: finalStatus,
-                    lastVoteBy: currentCommittee.name,
-                    lastVoteDate: new Date().toISOString()
-                }
-            };
-            const putResp = await fetch(`${SHEETY_API}/${rowId}`, {
-                method: "PUT",
+            const resp = await fetch(PROXY_URL, {
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatePayload)
+                body: JSON.stringify({ action: "castVote", rowId, memberName: currentCommittee.name, vote })
             });
-            if (putResp.ok) {
-                showAlert(`${currentCommittee.name} voted: ${vote}. Approvals: ${approveCount}/3 needed.`, "success");
-                if (finalStatus === "Approved" && app.approvalStatus !== "Approved") {
-                    sendApplicantEmail(app.email, app.fullName, app.applicationId, app.loanAmount, "Approved");
-                } else if (finalStatus === "Rejected" && app.approvalStatus !== "Rejected") {
-                    sendApplicantEmail(app.email, app.fullName, app.applicationId, app.loanAmount, "Rejected");
-                }
-                loadAllLoansForCommittee();
-            } else throw new Error("Update failed");
-        } catch(err) { showAlert("Vote error: " + err.message, "error"); }
+            const data = await resp.json();
+            if (!data.success) throw new Error(data.error);
+            showAlert(`${currentCommittee.name} voted: ${vote}. ${data.message}`, "success");
+            loadAllLoans();
+        } catch(err) {
+            showAlert("Vote error: " + err.message, "error");
+        }
     }
-    
+
     function escapeHtml(str) { if(!str) return ""; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-    
-    // LOGIN / LOGOUT
-    document.getElementById("committeeLoginBtn").addEventListener("click", () => {
-        const username = document.getElementById("committeeUser").value.trim().toLowerCase();
-        const pin = document.getElementById("committeePin").value;
-        const member = COMMITTEE_MEMBERS.find(m => m.username === username && m.pin === pin);
-        if (!member) { showAlert("Invalid credentials. Please contact administrator.", "error"); return; }
-        currentCommittee = member;
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("committeeDashboard").style.display = "block";
-        document.getElementById("dashboardUserName").innerText = member.name;
-        document.getElementById("dashboardUserRole").innerText = member.role;
-        loadAllLoansForCommittee();
-    });
+
     document.getElementById("logoutBtn").addEventListener("click", () => {
         currentCommittee = null;
         document.getElementById("loginBox").style.display = "block";
@@ -477,9 +422,7 @@
         document.getElementById("committeePin").value = "";
         showAlert("Logged out successfully.", "info");
     });
-    document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoansForCommittee(); });
-    
-    console.log("✅ We Masau portal ready – credentials hidden, committee editable.");
+    document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoans(); });
 </script>
 </body>
 </html>
