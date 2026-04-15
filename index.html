@@ -3,762 +3,667 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>The We Masau - Loan Application & Admin Portal</title>
+    <title>WE MASAU SACCO | Loan Application & Committee Portal</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    
-    <!-- EmailJS SDK -->
+    <!-- Google Fonts & EmailJS SDK -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Barlow Semi Condensed', sans-serif; background: linear-gradient(135deg, #0b2b40 0%, #1a4a5f 100%); min-height: 100vh; padding: 24px 20px; }
-        .container { max-width: 1400px; margin: 0 auto; background: #ffffff; border-radius: 32px; overflow: hidden; }
-        .header { background: linear-gradient(115deg, #0f3b2c 0%, #1e6b5e 100%); color: white; padding: 32px; text-align: center; }
-        .header h1 { font-family: 'Barlow Semi Condensed', sans-serif; font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 0%, #e0f2e9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .content { padding: 30px 42px 40px; }
-        .form-section { background: #fefefe; border-radius: 28px; padding: 28px 32px; margin-bottom: 32px; border: 1px solid #e9edf2; }
-        .form-section h2 { font-family: 'Barlow Semi Condensed', sans-serif; color: #1f2f3a; margin-bottom: 22px; padding-bottom: 12px; border-bottom: 3px solid #2c8c6e; display: inline-block; font-weight: 700; font-size: 1.55rem; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px 32px; }
-        .form-group { margin-bottom: 8px; }
-        .form-group label { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #1e3a4d; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
-        .form-group label::before { content: "▹"; color: #2c8c6e; font-size: 12px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 18px; font-size: 0.95rem; font-family: 'Barlow Semi Condensed', sans-serif; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2c8c6e; box-shadow: 0 0 0 3px rgba(44,140,110,0.1); }
-        .conditional-field { display: none; margin-top: 10px; }
-        .conditional-field.active { display: block; }
-        .term-display { background: #e8f5e9; border-radius: 12px; padding: 10px 15px; margin-top: 8px; border-left: 4px solid #2c8c6e; }
-        .btn-submit, .btn-admin { background: linear-gradient(105deg, #1f6e5c 0%, #0f4c3f 100%); color: white; border: none; padding: 16px 28px; font-size: 1.1rem; font-weight: 700; border-radius: 60px; cursor: pointer; width: 100%; transition: transform 0.2s; }
-        .btn-admin { background: linear-gradient(105deg, #2c5f8a 0%, #1a3a5f 100%); }
-        .admin-section { margin-top: 40px; border-top: 3px dashed #2c8c6e; padding-top: 30px; }
-        .admin-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .admin-header h2 { background: linear-gradient(105deg, #2c5f8a 0%, #1a3a5f 100%); display: inline-block; padding: 10px 25px; border-radius: 50px; color: white; font-size: 1.3rem; }
-        .admin-login-box { background: linear-gradient(135deg, #f0f7ff 0%, #e8eef5 100%); border-radius: 24px; padding: 30px; margin-bottom: 30px; }
-        .member-info-card { background: linear-gradient(135deg, #2c8c6e 0%, #1f6e5c 100%); color: white; padding: 20px; border-radius: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .logout-btn, .refresh-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 30px; color: white; cursor: pointer; font-weight: 600; margin-right: 10px; }
-        .loan-card { background: #f8f9fa; border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 5px solid #ffc107; transition: all 0.3s ease; }
-        .loan-card.approved { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left-color: #28a745; }
-        .loan-card.rejected { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); border-left-color: #dc3545; }
-        .loan-card.pending-review { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left-color: #ffc107; }
-        .endorsement-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin: 5px; }
-        .endorsement-approved { background: #28a745; color: white; }
-        .endorsement-pending-review { background: #ffc107; color: #856404; }
-        .endorsement-rejected { background: #dc3545; color: white; }
-        .status-select { margin-top: 15px; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; width: 100%; max-width: 200px; cursor: pointer; }
-        .alert { padding: 15px 20px; border-radius: 16px; margin-bottom: 20px; display: none; }
-        .alert.success { background: #d4edda; color: #155724; display: block; border-left: 4px solid #28a745; }
-        .alert.error { background: #f8d7da; color: #721c24; display: block; border-left: 4px solid #dc3545; }
-        .alert.info { background: #d1ecf1; color: #0c5460; display: block; border-left: 4px solid #17a2b8; }
-        .loading { display: none; text-align: center; margin-top: 20px; }
-        .loading.active { display: block; }
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #2c8c6e; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0b2b2c 0%, #123f3f 100%);
+            min-height: 100vh;
+            padding: 28px 20px;
+        }
+
+        .main-container {
+            max-width: 1480px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35);
+        }
+
+        /* header */
+        .hero {
+            background: linear-gradient(115deg, #0c4e3b 0%, #1c6d5e 100%);
+            padding: 36px 32px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #FFF6E0 0%, #e2f3e9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+        .hero p {
+            color: #e0f2ea;
+            font-weight: 500;
+        }
+
+        .content-padding {
+            padding: 32px 44px 44px;
+        }
+
+        /* cards & sections */
+        .form-card {
+            background: #fefefe;
+            border-radius: 28px;
+            padding: 28px 34px;
+            margin-bottom: 32px;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+        }
+        .form-card h2 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #1a3a2f;
+            border-left: 5px solid #2c8c6e;
+            padding-left: 18px;
+            margin-bottom: 28px;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 24px 36px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .input-group label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #2d4f42;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .input-group label i {
+            font-weight: normal;
+            color: #2c8c6e;
+        }
+        .required-star {
+            color: #e05a5a;
+            font-size: 1.2rem;
+            margin-left: 4px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e9f0;
+            border-radius: 20px;
+            font-family: 'Inter', monospace;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background: white;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c8c6e;
+            box-shadow: 0 0 0 3px rgba(44,140,110,0.12);
+        }
+        .term-badge {
+            background: #e9f6f1;
+            border-radius: 18px;
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1f5e4c;
+            border-left: 4px solid #2c8c6e;
+        }
+        .btn-primary, .btn-admin {
+            background: linear-gradient(100deg, #1b6e58 0%, #0f4f3f 100%);
+            border: none;
+            padding: 16px 24px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 44px;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-top: 8px;
+        }
+        .btn-admin {
+            background: linear-gradient(100deg, #2a5f7a 0%, #16435a 100%);
+        }
+        .btn-primary:hover, .btn-admin:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        }
+        .alert-banner {
+            padding: 14px 20px;
+            border-radius: 28px;
+            margin-bottom: 24px;
+            display: none;
+            font-weight: 500;
+        }
+        .alert-success {
+            background: #daf5e4;
+            color: #0a5e3a;
+            border-left: 6px solid #2c8c6e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .alert-error {
+            background: #ffe6e5;
+            color: #b13b3b;
+            border-left: 6px solid #dc3545;
+        }
+        .alert-info {
+            background: #e2f0fd;
+            color: #1e5a7a;
+            border-left: 6px solid #17a2b8;
+        }
+        .spinner-overlay {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 3px solid #eef2f5;
+            border-top: 3px solid #2c8c6e;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .required-star { color: #d9534f; margin-left: 4px; }
-        .vote-summary { margin-top: 10px; padding: 10px; border-radius: 12px; background: white; }
-        .vote-count { font-size: 1.1rem; font-weight: bold; }
-        hr { margin: 20px 0; border: none; border-top: 2px dotted #e0e0e0; }
-        @media (max-width: 780px) { .content { padding: 24px 18px; } .admin-header { justify-content: center; text-align: center; } .member-info-card { flex-direction: column; text-align: center; } }
+        hr {
+            margin: 28px 0;
+            border: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #cbe5dc, transparent);
+        }
+        .committee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: #f1f8f5;
+            padding: 14px 24px;
+            border-radius: 48px;
+        }
+        .loan-card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 22px;
+            margin-bottom: 22px;
+            border: 1px solid #eef0f2;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .loan-card.approved { background: linear-gradient(120deg, #e0f7ea, #caf0db); border-left: 7px solid #28a745; }
+        .loan-card.rejected { background: linear-gradient(120deg, #ffe6e5, #ffdedc); border-left: 7px solid #dc3545; }
+        .loan-card.pending-review { background: linear-gradient(120deg, #fff5df, #ffefcf); border-left: 7px solid #ffc107; }
+        .vote-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+        .status-select {
+            background: white;
+            border-radius: 32px;
+            padding: 8px 16px;
+            font-weight: 500;
+            margin-top: 12px;
+            width: 200px;
+            cursor: pointer;
+        }
+        .vote-summary {
+            background: #f6f9fc;
+            border-radius: 20px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 780px) {
+            .content-padding { padding: 20px; }
+            .form-card { padding: 20px; }
+        }
+        small.hint {
+            color: #6c8d82;
+            font-size: 0.7rem;
+            margin-top: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1> THE WE MASAU LOAN PORTAL</h1>
-        <p>Apply for loans · Committee endorsement workflow (3 approvals required)</p>
+<div class="main-container">
+    <div class="hero">
+        <h1>🌾 WE MASAU LOAN MANAGEMENT</h1>
+        <p>Apply for micro-loans · Committee endorsement · 3 approvals required</p>
     </div>
-    
-    <div class="content">
-        <div id="alert" class="alert"></div>
-        
-        <!-- APPLICANT FORM -->
-        <form id="loanForm">
-            <div class="form-section">
-                <h2>📋 Member profile</h2>
-                <div class="form-grid">
-                    <div class="form-group"><label>Full name <span class="required-star">*</span></label><input type="text" id="fullName" placeholder="e.g., Thoko Banda"></div>
-                    <div class="form-group"><label>National ID/Passport <span class="required-star">*</span></label><input type="text" id="memberId" placeholder="WM-XXXXXX"></div>
-                    <div class="form-group"><label>Email address <span class="required-star">*</span></label><input type="email" id="email" placeholder="member@wemasau.mw"></div>
-                    <div class="form-group"><label>Phone <span class="required-star">*</span></label><input type="tel" id="phone" placeholder="0999 123 456"></div>
-                    <div class="form-group"><label>Join date <span class="required-star">*</span></label><input type="date" id="joinDate"></div>
-                    <div class="form-group"><label>Membership status <span class="required-star">*</span></label><select id="membershipStatus"><option value="">-- select --</option><option value="Active">✅ Active</option><option value="Inactive">⚠️ Inactive</option></select></div>
+    <div class="content-padding">
+        <div id="globalAlert" class="alert-banner"></div>
+
+        <!-- ========== APPLICANT FORM ========== -->
+        <form id="applicantForm">
+            <div class="form-card">
+                <h2>👤 Member Profile</h2>
+                <div class="grid-2col">
+                    <div class="input-group"><label>Full name <span class="required-star">*</span></label><input type="text" id="fullName" placeholder="Chikondi Phiri"></div>
+                    <div class="input-group"><label>National ID / Member No. <span class="required-star">*</span></label><input type="text" id="memberId" placeholder="WM-98765"></div>
+                    <div class="input-group"><label>Email address <span class="required-star">*</span></label><input type="email" id="email" placeholder="member@wemasau.mw"></div>
+                    <div class="input-group"><label>Phone number <span class="required-star">*</span></label><input type="tel" id="phone" placeholder="0888 123 456"></div>
+                    <div class="input-group"><label>Join date <span class="required-star">*</span></label><input type="date" id="joinDate"></div>
+                    <div class="input-group"><label>Membership status</label><select id="membershipStatus"><option value="Active">✅ Active</option><option value="Inactive">⚠️ Inactive</option></select></div>
                 </div>
             </div>
 
-            <div class="form-section">
-                <h2>💰 Loan request</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Loan type <span class="required-star">*</span></label>
-                        <select id="loanType">
-                            <option value="">-- select --</option>
-                            <option value="Emergency">🚨 Emergency</option>
-                            <option value="Education">📚 Education</option>
-                            <option value="Business">💼 Business</option>
-                            <option value="Agriculture">🌾 Agriculture</option>
-                            <option value="Home Improvement">🏠 Home Improvement</option>
-                            <option value="Other">📝 Other</option>
-                        </select>
-                    </div>
-                    
-                    <div id="otherLoanTypeContainer" class="conditional-field">
-                        <div class="form-group">
-                            <label>Please specify <span class="required-star">*</span></label>
-                            <input type="text" id="otherLoanType" placeholder="Specify loan type">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Loan amount (MWK) <span class="required-star">*</span></label>
-                        <input type="number" id="loanAmount" step="1000" placeholder="Enter amount">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Available Terms</label>
-                        <div id="termDisplay" class="term-display">
-                            <span>💰 Enter loan amount to see available terms</span>
-                        </div>
-                        <input type="hidden" id="loanTerm">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Repayment method <span class="required-star">*</span></label>
-                        <select id="repaymentMethod">
-                            <option value="">-- select --</option>
-                            <option value="Monthly_salary">📅 Monthly (salary deduction)</option>
-                            <option value="Monthly_agri">📅 Monthly (Agricultural/Business)</option>
-                            <option value="Monthly_other">📅 Monthly (Other)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Preferred Disbursement Date <span class="required-star">*</span></label>
-                        <input type="date" id="preferredDisbursementDate">
-                        <small style="color: #888; display: block; margin-top: 5px;">Select your preferred date for fund disbursement</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Loan purpose <span class="required-star">*</span></label>
-                        <textarea id="purpose" rows="3" placeholder="Describe how loan will be used..."></textarea>
-                    </div>
+            <div class="form-card">
+                <h2>💰 Loan Details</h2>
+                <div class="grid-2col">
+                    <div class="input-group"><label>Loan type</label><select id="loanType"><option value="">-- Select --</option><option value="Emergency">🚨 Emergency</option><option value="Education">📚 Education</option><option value="Business">💼 Business</option><option value="Agriculture">🌾 Agriculture</option><option value="Home Improvement">🏠 Home Improvement</option><option value="Other">📝 Other</option></select></div>
+                    <div id="otherLoanTypeGroup" style="display: none;"><div class="input-group"><label>Specify other</label><input type="text" id="otherLoanTypeInput" placeholder="Describe loan type"></div></div>
+                    <div class="input-group"><label>Loan amount (MWK) <span class="required-star">*</span></label><input type="number" id="loanAmount" step="1000" placeholder="e.g., 500000"></div>
+                    <div class="input-group"><label>Repayment method</label><select id="repaymentMethod"><option value="">-- Select --</option><option value="Monthly_salary">📅 Monthly (salary deduction)</option><option value="Monthly_agri">📅 Monthly (Agricultural)</option><option value="Monthly_other">📅 Monthly (Other)</option></select></div>
+                    <div class="input-group"><label>Preferred disbursement date <span class="required-star">*</span></label><input type="date" id="preferredDisbursementDate"><small class="hint">Minimum tomorrow</small></div>
+                    <div class="input-group"><label>Available term (auto-calculated)</label><div id="dynamicTermBox" class="term-badge">💡 Enter loan amount to see term</div><input type="hidden" id="loanTermHidden"></div>
+                    <div class="input-group full-width"><label>Loan purpose <span class="required-star">*</span></label><textarea id="purpose" rows="2" placeholder="Explain how funds will be used..."></textarea></div>
                 </div>
             </div>
 
-            <div class="form-section">
-                <h2>📊 Financial Information</h2>
-                <div class="form-grid">
-                    <div class="form-group"><label>Monthly income (MWK) <span class="required-star">*</span></label><input type="number" id="monthlyIncome"></div>
-                    <div class="form-group"><label>Monthly expenses (MWK) <span class="required-star">*</span></label><input type="number" id="monthlyExpenses"></div>
-                    <div class="form-group"><label>Employment status <span class="required-star">*</span></label><select id="employmentStatus"><option value="">-- select --</option><option value="Employed">Employed</option><option value="Self-Employed">Self-Employed</option><option value="Farmer">Farmer</option></select></div>
-                    <div class="form-group"><label>Employer/Business</label><input type="text" id="employer"></div>
-                    <div class="form-group"><label>Years employed</label><input type="number" id="yearsEmployed" step="0.5"></div>
-                    <div class="form-group"><label>Existing loans?</label><select id="existingLoans"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+            <div class="form-card">
+                <h2>📊 Financial Health</h2>
+                <div class="grid-2col">
+                    <div class="input-group"><label>Monthly income (MWK)</label><input type="number" id="monthlyIncome" placeholder="Gross income"></div>
+                    <div class="input-group"><label>Monthly expenses (MWK)</label><input type="number" id="monthlyExpenses" placeholder="Recurring costs"></div>
+                    <div class="input-group"><label>Employment status</label><select id="employmentStatus"><option value="">-- Select --</option><option value="Employed">Employed</option><option value="Self-Employed">Self-Employed</option><option value="Farmer">Farmer</option></select></div>
+                    <div class="input-group"><label>Employer / Business name</label><input type="text" id="employer" placeholder="Organization"></div>
+                    <div class="input-group"><label>Years employed</label><input type="number" step="0.5" id="yearsEmployed"></div>
+                    <div class="input-group"><label>Existing loans?</label><select id="existingLoans"><option value="No">No</option><option value="Yes">Yes</option></select></div>
                 </div>
             </div>
 
-            <div class="form-section">
-                <h2>🤝 Guarantor details (2 required)</h2>
-                <div class="form-grid">
-                    <div class="form-group"><label>Guarantor 1 name <span class="required-star">*</span></label><input type="text" id="guarantor1Name"></div>
-                    <div class="form-group"><label>Guarantor 1 phone <span class="required-star">*</span></label><input type="tel" id="guarantor1Phone"></div>
-                    <div class="form-group"><label>Guarantor 2 name <span class="required-star">*</span></label><input type="text" id="guarantor2Name"></div>
-                    <div class="form-group"><label>Guarantor 2 phone <span class="required-star">*</span></label><input type="tel" id="guarantor2Phone"></div>
+            <div class="form-card">
+                <h2>🤝 Guarantors (2 required)</h2>
+                <div class="grid-2col">
+                    <div class="input-group"><label>Guarantor 1 full name <span class="required-star">*</span></label><input type="text" id="guarantor1Name"></div>
+                    <div class="input-group"><label>Guarantor 1 phone <span class="required-star">*</span></label><input type="tel" id="guarantor1Phone"></div>
+                    <div class="input-group"><label>Guarantor 2 full name <span class="required-star">*</span></label><input type="text" id="guarantor2Name"></div>
+                    <div class="input-group"><label>Guarantor 2 phone <span class="required-star">*</span></label><input type="tel" id="guarantor2Phone"></div>
                 </div>
             </div>
-
-            <button type="button" class="btn-submit" id="submitBtn">SUBMIT APPLICATION</button>
-            <div class="loading" id="loading"><div class="spinner"></div><p>Submitting application...</p></div>
+            <button type="button" class="btn-primary" id="submitLoanBtn">📨 SUBMIT APPLICATION</button>
+            <div id="formSpinner" class="spinner-overlay"><div class="spinner"></div><p>Processing application...</p></div>
         </form>
-        
+
         <hr>
-        
-        <!-- COMMITTEE PORTAL SECTION -->
-        <div class="admin-section">
-            <div class="admin-header">
-                <h2>COMMITTEE PORTAL</h2>
-                <p style="color: #666;">Authorized committee members - Each member votes: Approve / Reject / Pending Review</p>
-                <p style="color: #2c8c6e; font-weight: bold;">3 Approvals needed for loan approval</p>
+
+        <!-- ========== COMMITTEE PORTAL ========== -->
+        <div style="margin-top: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
+                <h2 style="background: linear-gradient(105deg,#2a5f7a,#16435a); padding: 8px 30px; border-radius: 50px; color: white;">🏛️ COMMITTEE VOTING PORTAL</h2>
+                <p style="color: #2c6e5a; font-weight: 500;">✓ 3 approvals = loan approved</p>
             </div>
-            
-            <div id="adminLoginForm" class="admin-login-box">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Committee Member ID <span class="required-star">*</span></label>
-                        <input type="text" id="committeeUsername" placeholder="Enter your username (e.g., john.banda)">
-                        <small style="color: #888; display: block; margin-top: 5px;">Usernames: john.banda, mary.phiri, peter.mwale, grace.chisale, charles.dzoole</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Access PIN <span class="required-star">*</span></label>
-                        <input type="password" id="adminPin" placeholder="Enter your PIN">
-                        <small style="color: #888; display: block; margin-top: 5px;">Default PIN: 1234 for all</small>
-                    </div>
+            <div id="loginBox" class="form-card">
+                <div class="grid-2col">
+                    <div class="input-group"><label>Committee username</label><input type="text" id="committeeUser" placeholder="e.g., john.banda"><small class="hint">Demo: john.banda, mary.phiri, peter.mwale, grace.chisale, charles.dzoole</small></div>
+                    <div class="input-group"><label>PIN code</label><input type="password" id="committeePin" placeholder="••••"><small class="hint">Default PIN: 1234 (all members)</small></div>
                 </div>
-                <button type="button" class="btn-admin" id="loginBtn">LOGIN TO COMMITTEE PORTAL</button>
+                <button class="btn-admin" id="committeeLoginBtn">🔐 LOGIN TO DASHBOARD</button>
             </div>
-            
+
             <div id="committeeDashboard" style="display: none;">
-                <div class="member-info-card">
-                    <div>
-                        <h3 id="displayMemberName">Loading...</h3>
-                        <p id="displayMemberRole" style="opacity: 0.9;">Loading...</p>
-                    </div>
-                    <div>
-                        <button type="button" class="refresh-btn" id="refreshBtn">Refresh</button>
-                        <button type="button" class="logout-btn" id="logoutBtn">Logout</button>
-                    </div>
+                <div class="committee-header">
+                    <div><strong id="dashboardUserName">-</strong> <span id="dashboardUserRole" style="background:#e9ecef; padding:4px 12px; border-radius:20px; margin-left:12px;"></span></div>
+                    <div><button id="refreshLoansBtn" style="background:#e9ecef; border:none; padding:6px 20px; border-radius:30px; margin-right:12px; cursor:pointer;">⟳ Refresh</button><button id="logoutBtn" style="background:#2c5f6e; color:white; border:none; padding:6px 20px; border-radius:30px; cursor:pointer;">Logout</button></div>
                 </div>
-                <div class="form-section">
-                    <h2>Loan Applications for Voting</h2>
-                    <div id="loansList"></div>
+                <div class="form-card">
+                    <h2>📋 Pending & Active Loan Applications</h2>
+                    <div id="loansContainer">Loading applications...</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-// ============================================================
-// EMAILJS CONFIGURATION
-// ============================================================
-var EMAILJS_PUBLIC_KEY = "g36wnJhl9MeP65N7H";
-var EMAILJS_SERVICE_ID = "service_dnj10br";
-var EMAILJS_TEMPLATE_ID = "template_fx0sgeh";
-
-// Initialize EmailJS
-if (typeof emailjs !== 'undefined') {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    console.log("EmailJS initialized");
-}
-
-// ============================================================
-// BCC EMAIL FUNCTION
-// ============================================================
-function sendEmailWithBCC(toAddress, bccAddresses, recipientName, emailMessage, applicationId, loanAmount, submissionDate) {
-    console.log("Sending email to: " + toAddress);
-    if (bccAddresses) {
-        console.log("BCC to: " + bccAddresses);
+    // -------------------------------
+    // 1. CONFIGURATION
+    // -------------------------------
+    const SHEETY_API = "https://api.sheety.co/3ac95be1e7d1588ffe19f585e744f83a/weMasauLoanApplications/applications";
+    const SHEET_OBJ = "applications";
+    
+    // EmailJS keys (working demo config)
+    const EMAILJS_PUBLIC = "g36wnJhl9MeP65N7H";
+    const EMAILJS_SERVICE = "service_dnj10br";
+    const EMAILJS_TEMPLATE = "template_fx0sgeh";
+    emailjs.init(EMAILJS_PUBLIC);
+    
+    // Hardcoded committee members (demo friendly)
+    const COMMITTEE_MEMBERS = [
+        { username: "john.banda", name: "John Banda", role: "Committee Chair", pin: "1234", email: "john.banda@wemasau.mw" },
+        { username: "mary.phiri", name: "Mary Phiri", role: "Vice Chair", pin: "1234", email: "mary.phiri@wemasau.mw" },
+        { username: "peter.mwale", name: "Peter Mwale", role: "Secretary", pin: "1234", email: "peter.mwale@wemasau.mw" },
+        { username: "grace.chisale", name: "Grace Chisale", role: "Treasurer", pin: "1234", email: "grace.chisale@wemasau.mw" },
+        { username: "charles.dzoole", name: "Charles Dzoole", role: "Member", pin: "1234", email: "charles.dzoole@wemasau.mw" }
+    ];
+    
+    let currentCommittee = null;
+    
+    // Loan term brackets (amount → term in months)
+    const TERM_BRACKETS = [
+        { max: 250999, termMonths: "1", display: "1 month" },
+        { max: 600999, termMonths: "2", display: "2 months" },
+        { max: 800999, termMonths: "3", display: "3 months" },
+        { max: 1000999, termMonths: "3.5", display: "3.5 months" },
+        { max: 1500999, termMonths: "4", display: "4 months" },
+        { max: 2000999, termMonths: "4.5", display: "4.5 months" },
+        { max: 3000000, termMonths: "5", display: "5 months" }
+    ];
+    
+    function getTermByAmount(amount) {
+        if (!amount || amount <= 0) return null;
+        for (let b of TERM_BRACKETS) if (amount <= b.max) return b;
+        return null;
     }
     
-    var params = {
-        to_email: toAddress,
-        bcc_email: bccAddresses || "",
-        name: recipientName,
-        message: emailMessage,
-        application_id: applicationId,
-        loan_amount: loanAmount,
-        submission_date: submissionDate,
-        from_name: "The We Masau Loan Auth & Operations Chair"
-    };
+    function formatMwk(amount) { return "MWK " + Number(amount).toLocaleString(); }
     
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
-        .then(function(response) {
-            console.log("Email sent successfully to: " + toAddress);
-        })
-        .catch(function(error) {
-            console.error("Email failed to: " + toAddress, error);
-        });
-}
-
-// ============================================================
-// INDIVIDUAL EMAIL FUNCTION
-// ============================================================
-function sendIndividualEmail(toAddress, recipientName, emailMessage, applicationId, loanAmount, submissionDate) {
-    console.log("Sending individual email to: " + toAddress);
-    
-    var params = {
-        to_email: toAddress,
-        name: recipientName,
-        message: emailMessage,
-        application_id: applicationId,
-        loan_amount: loanAmount,
-        submission_date: submissionDate,
-        from_name: "The We Masau Loan Auth & Operations Team"
-    };
-    
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
-        .then(function(response) {
-            console.log("Email sent successfully to: " + toAddress);
-        })
-        .catch(function(error) {
-            console.error("Email failed to: " + toAddress, error);
-        });
-}
-
-// ============================================================
-// CONFIGURATION
-// ============================================================
-var SHEETY_API_URL = "https://api.sheety.co/3ac95be1e7d1588ffe19f585e744f83a/weMasauLoanApplications/applications";
-var SHEET_NAME = "applications";
-
-var committeeMembers = [
-    { username: "joseph", name: "Joseph Mononga", role: "Committee Chair", pin: "chair26", email: "Josephmononga0@gmail.com" },
-    { username: "harry", name: "Harry Mononga", role: "Overall Chair", pin: "chair26", email: "harrymononga@gmail.com" },
-    { username: "amos", name: "Amos Tizora", role: "Patron", pin: "patron26", email: "tizora1900@gmail.com" },
-    { username: "emmanuel", name: "Emmanuel Kusunzi", role: "Operations", pin: "ops2026", email: "emmanuelkusunzi@gmail.com" },
-    { username: "levie", name: "Levie Sezza", role: "Committee Member", pin: "masau26", email: "levie.sezza@gmail.com" },
-    { username: "chifundo", name: "Chifundo Lodzeni", role: "Committee Member", pin: "masau26", email: "lodzenice@gmail.com" },
-    { username: "marvin", name: "Marvin Masangwi", role: "Treasurer", pin: "treas26", email: "marvinmasangwi@outlook.com" }
-];
-
-var currentCommitteeMember = null;
-
-var loanBrackets = [
-    { maxAmount: 250999.99, term: "1", termDisplay: "1 month" },
-    { maxAmount: 600999.99, term: "2", termDisplay: "2 months" },
-    { maxAmount: 800999.99, term: "3", termDisplay: "3 months" },
-    { maxAmount: 1000999.99, term: "3.5", termDisplay: "3.5 months" },
-    { maxAmount: 1500999.99, term: "4", termDisplay: "4 months" },
-    { maxAmount: 2000999.99, term: "4.5", termDisplay: "4.5 months" },
-    { maxAmount: 3000000.00, term: "5", termDisplay: "5 months" }
-];
-
-function formatCurrency(amount) {
-    return "MWK " + parseFloat(amount).toLocaleString(undefined, { minimumFractionDigits: 2 });
-}
-
-function getTermForAmount(amount) {
-    if (!amount || amount <= 0) return null;
-    for (var i = 0; i < loanBrackets.length; i++) {
-        if (amount <= loanBrackets[i].maxAmount) return loanBrackets[i];
-    }
-    return null;
-}
-
-// ============================================================
-// NOTIFICATION FUNCTIONS
-// ============================================================
-function notifyCommitteeMembersBCC(applicationData) {
-    console.log("Notifying committee members via BCC for application:", applicationData.applicationId);
-    
-    var chairEmail = "Josephmononga0@gmail.com";
-    var bccList = "harrymononga@gmail.com,tizora1900@gmail.com,emmanuelkusunzi@gmail.com,levie.sezza@gmail.com,lodzenice@gmail.com,marvinmasangwi@outlook.com";  // ← ALL OTHER MEMBERS
-    
-    var message = "A new loan application has been submitted and requires your review.\n\n" +
-        "Applicant: " + applicationData.fullName + "\n" +
-        "Member ID: " + applicationData.memberId + "\n" +
-        "Loan Amount: " + formatCurrency(applicationData.loanAmount) + "\n" +
-        "Loan Type: " + applicationData.loanType + "\n" +
-        "Purpose: " + applicationData.purpose + "\n" +
-        "Phone: " + applicationData.phone + "\n\n" +
-        "Please log in to the committee portal to cast your vote.\n\n" +
-        "Note: This email was sent to all committee members via BCC.";
-    
-    sendEmailWithBCC(
-        chairEmail,
-        bccList,
-        "Committee Members",
-        message,
-        applicationData.applicationId,
-        formatCurrency(applicationData.loanAmount),
-        new Date().toLocaleString()
-    );
-    
-     console.log("Committee notification sent: 1 email to chair, BCC to " + bccList.split(",").length + " others");
-}
-
-function notifyApplicantIndividual(applicationData, status) {
-    var message = "";
-    
-    if (status === "Received") {
-        message = "Thank you for submitting your loan application. It has been received and is pending review by the loan committee. You will be notified once a decision has been made.";
-    } else if (status === "Approved") {
-        message = "Congratulations! Your loan has been APPROVED. Funds will be disbursed to your registered account within 2-3 business days.";
-    } else if (status === "Rejected") {
-        message = "We regret to inform you that your loan application could not be approved at this time. Please contact the SACCO office for more information.";
-    } else if (status === "Pending Review") {
-        message = "Your application requires additional review. A loan officer will contact you within 48 hours.";
+    // show global alert
+    function showAlert(message, type = "info") {
+        const alertDiv = document.getElementById("globalAlert");
+        alertDiv.className = `alert-banner alert-${type}`;
+        alertDiv.innerHTML = message;
+        alertDiv.style.display = "flex";
+        setTimeout(() => { alertDiv.style.display = "none"; }, 5000);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
     
-    sendIndividualEmail(
-        applicationData.email,
-        applicationData.fullName,
-        message,
-        applicationData.applicationId,
-        formatCurrency(applicationData.loanAmount),
-        new Date().toLocaleString()
-    );
-}
-
-// ============================================================
-// AMOUNT INPUT HANDLER
-// ============================================================
-document.getElementById('loanAmount').addEventListener('input', function() {
-    var amount = parseFloat(this.value);
-    var termDisplay = document.getElementById('termDisplay');
-    var loanTermHidden = document.getElementById('loanTerm');
-    
-    if (!amount || amount <= 0) {
-        termDisplay.innerHTML = "Enter loan amount to see available terms";
-        loanTermHidden.value = "";
-        return;
-    }
-    
-    var bracket = getTermForAmount(amount);
-    if (bracket) {
-        termDisplay.innerHTML = "Available Term: " + bracket.termDisplay;
-        loanTermHidden.value = bracket.term;
-    } else {
-        termDisplay.innerHTML = "Amount exceeds maximum";
-        loanTermHidden.value = "";
-    }
-});
-
-// ============================================================
-// LOAN TYPE HANDLER
-// ============================================================
-document.getElementById('loanType').addEventListener('change', function() {
-    var otherContainer = document.getElementById('otherLoanTypeContainer');
-    if (this.value === 'Other') {
-        otherContainer.classList.add('active');
-    } else {
-        otherContainer.classList.remove('active');
-    }
-});
-
-// ============================================================
-// DATE HANDLERS
-// ============================================================
-var preferredDateInput = document.getElementById('preferredDisbursementDate');
-var tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-preferredDateInput.min = tomorrow.toISOString().split('T')[0];
-
-var joinDateInput = document.getElementById('joinDate');
-var today = new Date().toISOString().split('T')[0];
-joinDateInput.setAttribute('max', today);
-
-// ============================================================
-// COMMITTEE LOGIN
-// ============================================================
-document.getElementById('loginBtn').addEventListener('click', function() {
-    var username = document.getElementById('committeeUsername').value.trim().toLowerCase();
-    var pin = document.getElementById('adminPin').value;
-    
-    var member = null;
-    for (var i = 0; i < committeeMembers.length; i++) {
-        if (committeeMembers[i].username === username && committeeMembers[i].pin === pin) {
-            member = committeeMembers[i];
-            break;
-        }
-    }
-    
-    if (!member) {
-        showAlert("Invalid username or PIN.", "error");
-        return;
-    }
-    
-    currentCommitteeMember = member;
-    
-    document.getElementById('adminLoginForm').style.display = 'none';
-    document.getElementById('committeeDashboard').style.display = 'block';
-    
-    document.getElementById('displayMemberName').innerHTML = member.name;
-    document.getElementById('displayMemberRole').innerHTML = member.role;
-    
-    showAlert("Welcome " + member.name + "!", "success");
-    loadAllLoans();
-});
-
-document.getElementById('logoutBtn').addEventListener('click', function() {
-    currentCommitteeMember = null;
-    document.getElementById('adminLoginForm').style.display = 'block';
-    document.getElementById('committeeDashboard').style.display = 'none';
-    document.getElementById('committeeUsername').value = '';
-    document.getElementById('adminPin').value = '';
-    showAlert("Logged out.", "info");
-});
-
-document.getElementById('refreshBtn').addEventListener('click', function() {
-    loadAllLoans();
-});
-
-// ============================================================
-// VOTING FUNCTION
-// ============================================================
-window.castVote = async function(rowId, voteValue) {
-    if (!currentCommitteeMember) return;
-    
-    try {
-        var getResponse = await fetch(SHEETY_API_URL + '/' + rowId);
-        var getData = await getResponse.json();
-        var app = getData.application;
+    // Email: send to applicant
+    function sendApplicantEmail(applicantEmail, fullName, appId, amount, statusMsg) {
+        let bodyMsg = "";
+        if (statusMsg === "Received") bodyMsg = `Dear ${fullName},\n\nYour loan application (${appId}) has been received successfully. Our committee will review and you'll be notified. Thank you for trusting We Masau.`;
+        else if (statusMsg === "Approved") bodyMsg = `Congratulations ${fullName}! Your loan of ${formatMwk(amount)} has been APPROVED. Funds will be disbursed within 2-3 working days.`;
+        else if (statusMsg === "Rejected") bodyMsg = `Dear ${fullName}, your loan application (${appId}) was not approved. Please contact SACCO admin for clarification.`;
+        else bodyMsg = `Your application ${appId} status update: ${statusMsg}.`;
         
-        var votes = [];
-        try { votes = JSON.parse(app.votes || '[]'); } catch(e) { votes = []; }
-        
-        var existingIndex = -1;
-        for (var i = 0; i < votes.length; i++) {
-            if (votes[i].member === currentCommitteeMember.name) {
-                existingIndex = i;
-                break;
-            }
-        }
-        
-        if (existingIndex !== -1) {
-            votes[existingIndex].vote = voteValue;
-            votes[existingIndex].timestamp = new Date().toISOString();
+        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+            to_email: applicantEmail,
+            name: fullName,
+            message: bodyMsg,
+            application_id: appId,
+            loan_amount: formatMwk(amount),
+            submission_date: new Date().toLocaleString(),
+            from_name: "We Masau Loan Committee"
+        }).then(() => console.log(`Email to ${applicantEmail} sent`)).catch(e => console.warn("EmailJS err", e));
+    }
+    
+    // BCC committee notification (all members in BCC)
+    function notifyAllCommitteeBCC(applicantData) {
+        const allEmails = COMMITTEE_MEMBERS.map(m => m.email).join(",");
+        const firstChairEmail = COMMITTEE_MEMBERS[0].email;
+        const messageBody = `🔔 NEW LOAN APPLICATION\nApplicant: ${applicantData.fullName}\nID: ${applicantData.memberId}\nAmount: ${formatMwk(applicantData.loanAmount)}\nType: ${applicantData.loanType}\nPurpose: ${applicantData.purpose}\n\nLogin to committee portal to cast your vote. 3 approvals required.`;
+        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+            to_email: firstChairEmail,
+            bcc_email: allEmails,
+            name: "Committee Members",
+            message: messageBody,
+            application_id: applicantData.applicationId,
+            loan_amount: formatMwk(applicantData.loanAmount),
+            submission_date: new Date().toLocaleString(),
+            from_name: "We Masau System"
+        }).catch(e => console.warn("BCC notify failed", e));
+    }
+    
+    // ========== LOAN AMOUNT -> TERM DYNAMIC ==========
+    const loanAmountInput = document.getElementById("loanAmount");
+    const termBox = document.getElementById("dynamicTermBox");
+    const loanTermHidden = document.getElementById("loanTermHidden");
+    loanAmountInput.addEventListener("input", () => {
+        let amount = parseFloat(loanAmountInput.value);
+        let bracket = getTermByAmount(amount);
+        if (bracket && amount > 0) {
+            termBox.innerHTML = `✅ Approved term: ${bracket.display} (repayment period)`;
+            loanTermHidden.value = bracket.termMonths;
         } else {
-            votes.push({ member: currentCommitteeMember.name, vote: voteValue, timestamp: new Date().toISOString() });
+            termBox.innerHTML = "⚠️ Enter valid loan amount (max MWK 3,000,000)";
+            loanTermHidden.value = "";
         }
-        
-        var approveCount = 0;
-        var rejectCount = 0;
-        var pendingCount = 0;
-        for (var j = 0; j < votes.length; j++) {
-            if (votes[j].vote === 'Approved') approveCount++;
-            else if (votes[j].vote === 'Rejected') rejectCount++;
-            else if (votes[j].vote === 'Pending Review') pendingCount++;
-        }
-        
-        var finalStatus = "Pending";
-        if (approveCount >= 3) finalStatus = "Approved";
-        else if (rejectCount >= 3) finalStatus = "Rejected";
-        else if (pendingCount >= 3) finalStatus = "Pending Review";
-        
-        var updateData = {
-            application: {
-                votes: JSON.stringify(votes),
-                approveCount: approveCount,
-                rejectCount: rejectCount,
-                pendingCount: pendingCount,
-                approvalStatus: finalStatus,
-                lastVoteBy: currentCommitteeMember.name,
-                lastVoteDate: new Date().toISOString()
-            }
-        };
-        
-        if (finalStatus === 'Approved') {
-            updateData.application.disbursementDate = new Date().toISOString();
-        }
-        
-        var updateResponse = await fetch(SHEETY_API_URL + '/' + rowId, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updateData)
-        });
-        
-        if (updateResponse.ok) {
-            showAlert(currentCommitteeMember.name + " voted: " + voteValue + "\nVotes: Approve: " + approveCount + " | Reject: " + rejectCount + " | Pending: " + pendingCount, "success");
-            loadAllLoans();
-            
-            if (finalStatus === "Approved" && app.approvalStatus !== "Approved") {
-                var applicantData = { email: app.email, fullName: app.fullName, applicationId: app.applicationId, loanAmount: app.loanAmount };
-                notifyApplicantIndividual(applicantData, "Approved");
-            }
-        }
-    } catch (error) {
-        showAlert("Error: " + error.message, "error");
-    }
-};
-
-// ============================================================
-// LOAD APPLICATIONS FUNCTION
-// ============================================================
-window.loadAllLoans = async function() {
-    if (!currentCommitteeMember) return;
+    });
     
-    var loansDiv = document.getElementById('loansList');
-    loansDiv.innerHTML = '<div class="spinner"></div><p>Loading...</p>';
+    // show other loan type field
+    const loanTypeSelect = document.getElementById("loanType");
+    const otherGroup = document.getElementById("otherLoanTypeGroup");
+    loanTypeSelect.addEventListener("change", () => {
+        otherGroup.style.display = loanTypeSelect.value === "Other" ? "block" : "none";
+    });
     
-    try {
-        var response = await fetch(SHEETY_API_URL);
-        var data = await response.json();
-        var applications = data[SHEET_NAME] || [];
+    // date constraints
+    const prefDate = document.getElementById("preferredDisbursementDate");
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+    prefDate.min = tomorrow.toISOString().split('T')[0];
+    document.getElementById("joinDate").max = new Date().toISOString().split('T')[0];
+    
+    // ========== SUBMIT APPLICATION (Sheety) ==========
+    document.getElementById("submitLoanBtn").addEventListener("click", async () => {
+        const fullName = document.getElementById("fullName").value.trim();
+        const memberId = document.getElementById("memberId").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const joinDate = document.getElementById("joinDate").value;
+        const membershipStatus = document.getElementById("membershipStatus").value;
+        let loanType = loanTypeSelect.value;
+        if (loanType === "Other") loanType = `Other: ${document.getElementById("otherLoanTypeInput").value.trim() || "Not specified"}`;
+        const loanAmount = parseFloat(loanAmountInput.value);
+        const loanTerm = loanTermHidden.value;
+        const repaymentMethod = document.getElementById("repaymentMethod").value;
+        const prefDisbursement = prefDate.value;
+        const purpose = document.getElementById("purpose").value.trim();
+        const monthlyIncome = parseFloat(document.getElementById("monthlyIncome").value) || 0;
+        const monthlyExpenses = parseFloat(document.getElementById("monthlyExpenses").value) || 0;
+        const employmentStatus = document.getElementById("employmentStatus").value;
+        const employer = document.getElementById("employer").value;
+        const yearsEmployed = document.getElementById("yearsEmployed").value;
+        const existingLoans = document.getElementById("existingLoans").value;
+        const guarantor1Name = document.getElementById("guarantor1Name").value.trim();
+        const guarantor1Phone = document.getElementById("guarantor1Phone").value.trim();
+        const guarantor2Name = document.getElementById("guarantor2Name").value.trim();
+        const guarantor2Phone = document.getElementById("guarantor2Phone").value.trim();
         
-        if (applications.length === 0) {
-            loansDiv.innerHTML = '<p>No applications found.</p>';
+        if (!fullName || !memberId || !email || !phone || !joinDate || !loanAmount || loanAmount <= 0 || !prefDisbursement || !purpose || !guarantor1Name || !guarantor2Name) {
+            showAlert("Please fill all required fields (*): full name, member ID, email, phone, join date, loan amount, disbursement date, purpose, and both guarantors.", "error");
             return;
         }
+        if (!loanTerm) { showAlert("Loan amount must be between MWK 1,000 and MWK 3,000,000 to determine valid term.", "error"); return; }
         
-        var html = "";
-        for (var i = 0; i < applications.length; i++) {
-            var app = applications[i];
-            var votes = [];
-            try { votes = JSON.parse(app.votes || '[]'); } catch(e) { votes = []; }
-            
-            var currentStatus = app.approvalStatus || "Pending";
-            
-            var approveCount = app.approveCount || 0;
-            var rejectCount = app.rejectCount || 0;
-            var pendingCount = app.pendingCount || 0;
-            if (approveCount === 0 && rejectCount === 0 && pendingCount === 0) {
-                for (var v = 0; v < votes.length; v++) {
-                    if (votes[v].vote === 'Approved') approveCount++;
-                    else if (votes[v].vote === 'Rejected') rejectCount++;
-                    else if (votes[v].vote === 'Pending Review') pendingCount++;
-                }
-            }
-            
-            var memberVote = null;
-            for (var mv = 0; mv < votes.length; mv++) {
-                if (votes[mv].member === currentCommitteeMember.name) {
-                    memberVote = votes[mv];
-                    break;
-                }
-            }
-            var currentVoteValue = memberVote ? memberVote.vote : "";
-            
-            var cardClass = "";
-            if (currentStatus === "Approved") cardClass = "approved";
-            else if (currentStatus === "Rejected") cardClass = "rejected";
-            else if (currentStatus === "Pending Review") cardClass = "pending-review";
-            
-            var voteHtml = "";
-            if (currentStatus !== 'Approved' && currentStatus !== 'Rejected') {
-                voteHtml = '<div style="margin-top: 15px;"><strong>Your Vote:</strong><select class="status-select" onchange="castVote(\'' + app.id + '\', this.value)">' +
-                    '<option value="">-- Select --</option>' +
-                    '<option value="Approved" ' + (currentVoteValue === 'Approved' ? 'selected' : '') + '>Approve</option>' +
-                    '<option value="Rejected" ' + (currentVoteValue === 'Rejected' ? 'selected' : '') + '>Reject</option>' +
-                    '<option value="Pending Review" ' + (currentVoteValue === 'Pending Review' ? 'selected' : '') + '>Pending Review</option>' +
-                    '</select></div>';
-            }
-            
-            html += '<div class="loan-card ' + cardClass + '">' +
-                '<h3>' + (app.fullName || 'Unknown') + '</h3>' +
-                '<p><strong>Amount:</strong> ' + formatCurrency(app.loanAmount || 0) + ' | <strong>Term:</strong> ' + (app.loanTerm || '?') + ' months</p>' +
-                '<p><strong>Type:</strong> ' + (app.loanType || 'N/A') + '</p>' +
-                '<p><strong>ID:</strong> ' + (app.applicationId || 'N/A') + '</p>' +
-                '<div class="vote-summary">' +
-                '<strong>Votes:</strong> Approve: ' + approveCount + ' | Reject: ' + rejectCount + ' | Pending: ' + pendingCount +
-                '</div>' +
-                voteHtml +
-                '<p><strong>Status:</strong> <strong style="color: ' + 
-                (currentStatus === 'Approved' ? '#28a745' : (currentStatus === 'Rejected' ? '#dc3545' : (currentStatus === 'Pending Review' ? '#ffc107' : '#6c757d'))) + '">' +
-                currentStatus + '</strong></p></div>';
-        }
-        
-        loansDiv.innerHTML = html;
-        
-    } catch (error) {
-        loansDiv.innerHTML = '<p>Error loading applications.</p>';
-        console.error(error);
-    }
-};
-
-// ============================================================
-// SUBMIT APPLICATION
-// ============================================================
-document.getElementById('submitBtn').addEventListener('click', async function() {
-    var fullName = document.getElementById('fullName').value;
-    var memberId = document.getElementById('memberId').value;
-    var email = document.getElementById('email').value;
-    var phone = document.getElementById('phone').value;
-    var joinDate = document.getElementById('joinDate').value;
-    var membershipStatus = document.getElementById('membershipStatus').value;
-    var loanType = document.getElementById('loanType').value;
-    if (loanType === 'Other') {
-        loanType = "Other: " + document.getElementById('otherLoanType').value;
-    }
-    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
-    var loanTerm = document.getElementById('loanTerm').value;
-    var repaymentMethod = document.getElementById('repaymentMethod').value;
-    var preferredDisbursementDate = document.getElementById('preferredDisbursementDate').value;
-    var purpose = document.getElementById('purpose').value;
-    var monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value);
-    var monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value);
-    var employmentStatus = document.getElementById('employmentStatus').value;
-    var employer = document.getElementById('employer').value;
-    var yearsEmployed = document.getElementById('yearsEmployed').value;
-    var existingLoans = document.getElementById('existingLoans').value;
-    var guarantor1Name = document.getElementById('guarantor1Name').value;
-    var guarantor1Phone = document.getElementById('guarantor1Phone').value;
-    var guarantor2Name = document.getElementById('guarantor2Name').value;
-    var guarantor2Phone = document.getElementById('guarantor2Phone').value;
-    
-    if (!fullName || !email || !loanAmount || !preferredDisbursementDate) {
-        showAlert("Please fill all required fields", "error");
-        return;
-    }
-    
-    var applicationId = "WM-" + Date.now().toString(36).toUpperCase() + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
-    
-    var formData = {
-        timestamp: new Date().toISOString(),
-        applicationId: applicationId,
-        fullName: fullName,
-        memberId: memberId,
-        email: email,
-        phone: phone,
-        joinDate: joinDate,
-        membershipStatus: membershipStatus,
-        loanType: loanType,
-        loanAmount: loanAmount,
-        loanTerm: loanTerm,
-        repaymentMethod: repaymentMethod,
-        preferredDisbursementDate: preferredDisbursementDate,
-        purpose: purpose,
-        monthlyIncome: monthlyIncome,
-        monthlyExpenses: monthlyExpenses,
-        employmentStatus: employmentStatus,
-        employer: employer,
-        yearsEmployed: yearsEmployed,
-        existingLoans: existingLoans,
-        existingBalance: "0",
-        guarantor1Name: guarantor1Name,
-        guarantor1Phone: guarantor1Phone,
-        guarantor2Name: guarantor2Name,
-        guarantor2Phone: guarantor2Phone,
-        approvalStatus: "Pending",
-        votes: "[]",
-        approveCount: 0,
-        rejectCount: 0,
-        pendingCount: 0
-    };
-    
-    var loading = document.getElementById('loading');
-    var submitBtn = document.getElementById('submitBtn');
-    
-    submitBtn.disabled = true;
-    loading.classList.add('active');
-    
-    try {
-        var response = await fetch(SHEETY_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ application: formData })
-        });
-        
-        if (!response.ok) throw new Error("Submission failed");
-        
-        var appData = {
-            fullName: fullName,
-            email: email,
-            applicationId: applicationId,
-            loanAmount: loanAmount,
-            memberId: memberId,
-            loanType: loanType,
-            purpose: purpose,
-            phone: phone
+        const applicationId = "WM-" + Date.now().toString(36).toUpperCase() + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
+        const newApp = {
+            timestamp: new Date().toISOString(),
+            applicationId, fullName, memberId, email, phone, joinDate, membershipStatus,
+            loanType, loanAmount, loanTerm, repaymentMethod, preferredDisbursementDate: prefDisbursement,
+            purpose, monthlyIncome, monthlyExpenses, employmentStatus, employer, yearsEmployed, existingLoans,
+            existingBalance: "0", guarantor1Name, guarantor1Phone, guarantor2Name, guarantor2Phone,
+            approvalStatus: "Pending", votes: "[]", approveCount: 0, rejectCount: 0, pendingCount: 0, lastVoteBy: "", lastVoteDate: ""
         };
         
-        notifyApplicantIndividual(appData, "Received");
-        notifyCommitteeMembersBCC(appData);
+        const btn = document.getElementById("submitLoanBtn");
+        const spinner = document.getElementById("formSpinner");
+        btn.disabled = true; spinner.style.display = "block";
         
-        showAlert("Application Submitted! ID: " + applicationId, "success");
-        document.getElementById('loanForm').reset();
-        document.getElementById('termDisplay').innerHTML = "Enter loan amount to see available terms";
-        
-    } catch (error) {
-        showAlert("Submission failed", "error");
-    } finally {
-        submitBtn.disabled = false;
-        loading.classList.remove('active');
+        try {
+            const response = await fetch(SHEETY_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ [SHEET_OBJ]: newApp })
+            });
+            if (!response.ok) throw new Error("Sheety error");
+            showAlert(`✅ Application submitted! ID: ${applicationId}. Committee will review.`, "success");
+            sendApplicantEmail(email, fullName, applicationId, loanAmount, "Received");
+            notifyAllCommitteeBCC({ fullName, memberId, loanAmount, loanType, purpose, applicationId });
+            document.getElementById("applicantForm").reset();
+            termBox.innerHTML = "💡 Enter loan amount to see term";
+            loanTermHidden.value = "";
+            otherGroup.style.display = "none";
+        } catch (err) {
+            showAlert("Submission failed: " + err.message, "error");
+        } finally {
+            btn.disabled = false;
+            spinner.style.display = "none";
+        }
+    });
+    
+    // ========== COMMITTEE LOGIC ==========
+    async function loadAllLoansForCommittee() {
+        if (!currentCommittee) return;
+        const container = document.getElementById("loansContainer");
+        container.innerHTML = '<div class="spinner"></div><p>Loading loans...</p>';
+        try {
+            const resp = await fetch(SHEETY_API);
+            const data = await resp.json();
+            let apps = data[SHEET_OBJ] || [];
+            if (apps.length === 0) { container.innerHTML = "<p>No loan applications yet.</p>"; return; }
+            let html = "";
+            for (let app of apps) {
+                let votes = [];
+                try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
+                let approveCount = Number(app.approveCount) || 0;
+                let rejectCount = Number(app.rejectCount) || 0;
+                let pendingCount = Number(app.pendingCount) || 0;
+                const finalStatus = app.approvalStatus || "Pending";
+                let cardClass = "";
+                if (finalStatus === "Approved") cardClass = "approved";
+                else if (finalStatus === "Rejected") cardClass = "rejected";
+                else if (finalStatus === "Pending Review") cardClass = "pending-review";
+                
+                let currentUserVote = votes.find(v => v.member === currentCommittee.name);
+                let currentVoteVal = currentUserVote ? currentUserVote.vote : "";
+                let voteDropdown = "";
+                if (finalStatus !== "Approved" && finalStatus !== "Rejected") {
+                    voteDropdown = `<select class="status-select" data-appid="${app.id}" data-rowid="${app.id}">
+                        <option value="">-- Your vote --</option>
+                        <option value="Approved" ${currentVoteVal === "Approved" ? "selected" : ""}>✅ Approve</option>
+                        <option value="Rejected" ${currentVoteVal === "Rejected" ? "selected" : ""}>❌ Reject</option>
+                        <option value="Pending Review" ${currentVoteVal === "Pending Review" ? "selected" : ""}>⏳ Pending Review</option>
+                    </select>`;
+                } else {
+                    voteDropdown = `<p style="margin-top:10px;"><strong>🔒 Final decision:</strong> ${finalStatus}</p>`;
+                }
+                html += `<div class="loan-card ${cardClass}">
+                    <div class="flex-between"><h3>${escapeHtml(app.fullName)}</h3> <span>${app.applicationId}</span></div>
+                    <p><strong>💰 Amount:</strong> ${formatMwk(app.loanAmount)} | <strong>Term:</strong> ${app.loanTerm} months</p>
+                    <p><strong>📌 Type:</strong> ${app.loanType} | <strong>📞 Phone:</strong> ${app.phone}</p>
+                    <div class="vote-summary"><strong>🗳️ Committee votes:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingCount}</div>
+                    ${voteDropdown}
+                    <p><strong>Status:</strong> <span style="font-weight:800;">${finalStatus}</span></p>
+                </div>`;
+            }
+            container.innerHTML = html;
+            // attach event listeners to each dynamic select
+            document.querySelectorAll(".status-select").forEach(select => {
+                select.addEventListener("change", (e) => {
+                    const rowId = select.getAttribute("data-rowid");
+                    const voteValue = select.value;
+                    if (voteValue) castVoteOnLoan(rowId, voteValue);
+                });
+            });
+        } catch(err) { container.innerHTML = `<p>Error loading data: ${err.message}</p>`; }
     }
-});
-
-// ============================================================
-// ALERT FUNCTION
-// ============================================================
-function showAlert(message, type) {
-    var alertDiv = document.getElementById('alert');
-    alertDiv.className = "alert " + type;
-    alertDiv.innerHTML = message.replace(/\n/g, "<br>");
-    alertDiv.style.display = "block";
-    setTimeout(function() { alertDiv.style.display = "none"; }, 5000);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-console.log("We Masau Portal Ready - BCC Mode Active");
-console.log("API Endpoint: " + SHEETY_API_URL);
-console.log("Emails per application: 1 to committee (BCC) + 1 to applicant = 2 total");
+    
+    async function castVoteOnLoan(rowId, vote) {
+        if (!currentCommittee) return;
+        try {
+            const getResp = await fetch(`${SHEETY_API}/${rowId}`);
+            const getData = await getResp.json();
+            const app = getData.application;
+            let votes = [];
+            try { votes = JSON.parse(app.votes || "[]"); } catch(e) { votes = []; }
+            const existingIdx = votes.findIndex(v => v.member === currentCommittee.name);
+            if (existingIdx !== -1) votes[existingIdx] = { member: currentCommittee.name, vote, timestamp: new Date().toISOString() };
+            else votes.push({ member: currentCommittee.name, vote, timestamp: new Date().toISOString() });
+            
+            let approveCount = votes.filter(v => v.vote === "Approved").length;
+            let rejectCount = votes.filter(v => v.vote === "Rejected").length;
+            let pendingCount = votes.filter(v => v.vote === "Pending Review").length;
+            let finalStatus = "Pending";
+            if (approveCount >= 3) finalStatus = "Approved";
+            else if (rejectCount >= 3) finalStatus = "Rejected";
+            else if (pendingCount >= 3) finalStatus = "Pending Review";
+            
+            const updatePayload = {
+                application: {
+                    votes: JSON.stringify(votes),
+                    approveCount, rejectCount, pendingCount,
+                    approvalStatus: finalStatus,
+                    lastVoteBy: currentCommittee.name,
+                    lastVoteDate: new Date().toISOString()
+                }
+            };
+            const putResp = await fetch(`${SHEETY_API}/${rowId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatePayload)
+            });
+            if (putResp.ok) {
+                showAlert(`${currentCommittee.name} voted: ${vote}. Approvals: ${approveCount}/3 needed.`, "success");
+                if (finalStatus === "Approved" && app.approvalStatus !== "Approved") {
+                    sendApplicantEmail(app.email, app.fullName, app.applicationId, app.loanAmount, "Approved");
+                } else if (finalStatus === "Rejected" && app.approvalStatus !== "Rejected") {
+                    sendApplicantEmail(app.email, app.fullName, app.applicationId, app.loanAmount, "Rejected");
+                }
+                loadAllLoansForCommittee();
+            } else throw new Error("Update failed");
+        } catch(err) { showAlert("Vote error: " + err.message, "error"); }
+    }
+    
+    function escapeHtml(str) { if(!str) return ""; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    
+    // login / logout
+    document.getElementById("committeeLoginBtn").addEventListener("click", () => {
+        const username = document.getElementById("committeeUser").value.trim().toLowerCase();
+        const pin = document.getElementById("committeePin").value;
+        const member = COMMITTEE_MEMBERS.find(m => m.username === username && m.pin === pin);
+        if (!member) { showAlert("Invalid credentials. Use demo username & PIN 1234", "error"); return; }
+        currentCommittee = member;
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("committeeDashboard").style.display = "block";
+        document.getElementById("dashboardUserName").innerText = member.name;
+        document.getElementById("dashboardUserRole").innerText = member.role;
+        loadAllLoansForCommittee();
+    });
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        currentCommittee = null;
+        document.getElementById("loginBox").style.display = "block";
+        document.getElementById("committeeDashboard").style.display = "none";
+        document.getElementById("committeeUser").value = "";
+        document.getElementById("committeePin").value = "";
+        showAlert("Logged out successfully.", "info");
+    });
+    document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoansForCommittee(); });
+    
+    console.log("✅ We Masau portal ready — Sheety + EmailJS + 3-approval voting");
 </script>
+</body>
+</html>
