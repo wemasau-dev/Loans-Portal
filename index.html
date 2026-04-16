@@ -282,7 +282,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
                 body: JSON.stringify({ action: "submitApplication", application: newApp })
             });
             const result = await response.json();
-            if (!result.success) throw new Error(result.error || "Submission failed");
+            if (!result.success) throw new Error(result.message || result.error || "Submission failed");
             showAlert(`✅ Application submitted! ID: ${applicationId}. Committee will review.`, "success");
             document.getElementById("applicantForm").reset();
             termBox.innerHTML = "💡 Enter loan amount to see term";
