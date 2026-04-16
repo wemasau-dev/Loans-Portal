@@ -1,8 +1,10 @@
+// This is a Cloudflare Pages Function (runs on the same domain)
+const TARGET_URL = "https://script.google.com/macros/s/AKfycbxPMeG7fg2x8axT_iRYRj7PsWG-kn72ztu2YSKP-TaOPMDMfcW9P2yd1ueEq1u5eogvRw/exec";
+
 export async function onRequest(context) {
   const { request } = context;
-  const TARGET_URL = "https://script.google.com/macros/s/AKfycbxPMeG7fg2x8axT_iRYRj7PsWG-kn72ztu2YSKP-TaOPMDMfcW9P2yd1ueEq1u5eogvRw/exec";
   
-  // Handle preflight (though same-origin, but for safety)
+  // Handle CORS preflight (optional, but safe)
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -14,21 +16,38 @@ export async function onRequest(context) {
     });
   }
   
-  // Forward POST requests to Apps Script
-  const proxyRequest = new Request(TARGET_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: request.body,
-  });
+  // Only accept POST requests
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   
-  const response = await fetch(proxyRequest);
-  const data = await response.text();
-  
-  return new Response(data, {
-    status: response.status,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+  try {
+    // Forward the request body to Google Apps Script
+    const body = await request.text();
+    const proxyRequest = new Request(TARGET_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    });
+    
+    const response = await fetch(proxyRequest);
+    const responseText = await response.text();
+    
+    // Return the response with CORS headers (though same-origin, it's fine)
+    return new Response(responseText, {
+      status: response.status,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }
