@@ -311,7 +311,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
             });
             const data = await resp.json();
             if (!data.success) throw new Error(data.error);
-            currentCommittee = data.member;
+            currentCommittee = data;
             document.getElementById("loginBox").style.display = "none";
             document.getElementById("committeeDashboard").style.display = "block";
             document.getElementById("dashboardUserName").innerText = currentCommittee.name;
