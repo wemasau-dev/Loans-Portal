@@ -251,7 +251,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
         const guarantor2Name = document.getElementById("guarantor2Name").value.trim();
         const guarantor2Phone = document.getElementById("guarantor2Phone").value.trim();
 
-        if (!fullName || !memberId || !email || !phone || !joinDate || !loanAmount || loanAmount <= 0 || !prefDisbursement || !purpose || !guarantor1Name || !guarantor2Name) {
+      console.log("DEBUG:", (!fullName || !memberId || !email || !phone || !joinDate || !loanAmount || loanAmount <= 0 || !prefDisbursement || !purpose || !guarantor1Name || !guarantor2Name) {
             showAlert("Please fill all required fields (*): full name, member ID, email, phone, join date, loan amount, disbursement date, purpose, and both guarantors.", "error");
             return;
         }
