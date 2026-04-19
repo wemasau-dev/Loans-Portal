@@ -630,15 +630,10 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
             html += renderPagination("history", historyPage, historyTotal);
         }
         html += `</div>`;
-
         container.innerHTML = html;
                 attachVoteListeners();
         attachCommentListeners();
     }
-();
-        
-    }
-
     function renderLoanCard(app) {
         let votes = app.votesArray || [];
         const approvedBy = votes.filter(v => v.vote === "Approved").map(v => v.member);
