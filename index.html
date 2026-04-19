@@ -632,7 +632,11 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
         html += `</div>`;
 
         container.innerHTML = html;
-        attachVoteListeners();
+                attachVoteListeners();
+        attachCommentListeners();
+    }
+();
+        
     }
 
     function renderLoanCard(app) {
