@@ -153,6 +153,52 @@
     .page-btn, .filter-bar select, .search-bar input {
         font-family: 'Inter', sans-serif;
     }
+    .treasurer-comment-section {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+    }
+    .comment-input {
+        width: 100%;
+        min-height: 60px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        resize: vertical;
+        margin-top: 6px;
+        box-sizing: border-box;
+    }
+    .comment-save-btn {
+        margin-top: 6px;
+        padding: 6px 14px;
+        background: #4a90d9;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .comment-save-btn:hover {
+        background: #3a7bc8;
+    }
+    .comment-save-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    .treaser-comment-display {
+        margin-top: 12px;
+        padding: 8px 10px;
+        background: #f0f7ff;
+        border-left: 3px solid #4a90d9;
+        border-radius: 4px;
+    }
+    .treaser-comment-display p {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #333;
+    }
 
     <style>
         /* === YOUR EXISTING STYLES (unchanged, keep as in original) === */
@@ -501,6 +547,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
 
     function renderDashboard() {
         const container = document.getElementById("loansContainer");
+                attachCommentListeners();
 
         // Split applications
         let pendingApps = allApplications.filter(a => a.approvalStatus !== "Approved" && a.approvalStatus !== "Rejected");
@@ -650,7 +697,17 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
                     ${pendingHtml}
                     <div style="margin-top:8px;"><strong>Counts:</strong> 👍 Approve: ${approveCount} | 👎 Reject: ${rejectCount} | ⏳ Pending: ${pendingBy.length}</div>
                 </div>
-                ${voteDropdown}
+                               ${voteDropdown}
+                ${currentCommittee.role === "Treasurer" ? `
+                <div class="treasurer-comment-section">
+                    <label><strong>📝 Treasurer Comment:</strong></label>
+                    <textarea class="comment-input" data-rowid="${app.id}" placeholder="Add your comment about this application...">${app.treasurerComment || ""}</textarea>
+                    <button class="comment-save-btn" data-rowid="${app.id}">Save Comment</button>
+                </div>` : (app.treasurerComment ? `
+                <div class="treaser-comment-display">
+                    <strong>📝 Treasurer Comment:</strong>
+                    <p>${escapeHtml(app.treasurerComment)}</p>
+                </div>` : '')}
             </div>
         </div>`;
     }
@@ -704,6 +761,33 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
                 const rowId = select.getAttribute("data-rowid");
                 const voteValue = select.value;
                 if (voteValue) castVote(rowId, voteValue);
+            });
+        });
+    }
+        function attachCommentListeners() {
+        document.querySelectorAll(".comment-save-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const rowId = btn.getAttribute("data-rowid");
+                const textarea = document.querySelector(`textarea[data-rowid="${rowId}"]`);
+                const comment = textarea.value.trim();
+                if (!comment) { showAlert("Please enter a comment first.", "error"); return; }
+                btn.disabled = true;
+                btn.textContent = "Saving...";
+                try {
+                    const resp = await fetch(PROXY_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action: "addTreasurerComment", rowId: parseInt(rowId), comment })
+                    });
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.message || "Failed to save comment");
+                    showAlert("✅ Comment saved!", "success");
+                    loadAllLoans();
+                } catch (err) {
+                    showAlert("Error: " + err.message, "error");
+                    btn.disabled = false;
+                    btn.textContent = "Save Comment";
+                }
             });
         });
     }
