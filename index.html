@@ -808,7 +808,8 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
             });
         });
     }
-              async function downloadPDF(appId) {
+
+        function downloadPDF(appId) {
         const app = allApplications.find(a => a.id === appId);
         if (!app) return;
 
@@ -817,89 +818,101 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
         const rejectedBy = votes.filter(v => v.vote === "Rejected").map(v => v.member);
         const pendingBy = votes.filter(v => v.vote === "Pending Review").map(v => v.member);
 
-        const pdfContent = document.createElement("div");
-        pdfContent.style.cssText = "padding: 30px; font-family: Arial, sans-serif; font-size: 12px; color: #333; width: 700px; background: #fff;";
-        pdfContent.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #1a5276; padding-bottom: 15px;">
-                <h1 style="margin: 0; color: #1a5276; font-size: 22px;">We Masau Loan Committee</h1>
-                <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Loan Application Details</p>
-            </div>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Application Information</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Application ID:</td><td style="padding: 4px 8px;">${app.applicationId}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Status:</td><td style="padding: 4px 8px; font-weight: bold; color: ${app.approvalStatus === 'Approved' ? '#155724' : app.approvalStatus === 'Rejected' ? '#721c24' : '#856404'};">${app.approvalStatus}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Submitted:</td><td style="padding: 4px 8px;">${app.timestamp ? new Date(app.timestamp).toLocaleString() : 'N/A'}</td></tr>
-            </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Applicant Details</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Full Name:</td><td style="padding: 4px 8px;">${app.fullName || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Member ID:</td><td style="padding: 4px 8px;">${app.memberId || 'N/A'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Email:</td><td style="padding: 4px 8px;">${app.email || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Phone:</td><td style="padding: 4px 8px;">${app.phone || 'N/A'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Join Date:</td><td style="padding: 4px 8px;">${app.joinDate || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Membership Status:</td><td style="padding: 4px 8px;">${app.membershipStatus || 'N/A'}</td></tr>
-            </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Loan Details</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Loan Type:</td><td style="padding: 4px 8px;">${app.loanType || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Loan Amount:</td><td style="padding: 4px 8px; font-weight: bold; font-size: 14px;">MWK ${Number(app.loanAmount || 0).toLocaleString()}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Loan Term:</td><td style="padding: 4px 8px;">${app.loanTerm || 'N/A'} months</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Repayment Method:</td><td style="padding: 4px 8px;">${app.repaymentMethod || 'N/A'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Preferred Disbursement:</td><td style="padding: 4px 8px;">${app.preferredDisbursementDate || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Purpose:</td><td style="padding: 4px 8px;">${app.purpose || 'N/A'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Monthly Income:</td><td style="padding: 4px 8px;">MWK ${Number(app.monthlyIncome || 0).toLocaleString()}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Monthly Expenses:</td><td style="padding: 4px 8px;">MWK ${Number(app.monthlyExpenses || 0).toLocaleString()}</td></tr>
-            </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Employment Details</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Employment Status:</td><td style="padding: 4px 8px;">${app.employmentStatus || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Employer:</td><td style="padding: 4px 8px;">${app.employer || 'N/A'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Years Employed:</td><td style="padding: 4px 8px;">${app.yearsEmployed || 'N/A'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Existing Loans:</td><td style="padding: 4px 8px;">${app.existingLoans || 'N/A'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Existing Balance:</td><td style="padding: 4px 8px;">MWK ${Number(app.existingBalance || 0).toLocaleString()}</td></tr>
-            </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Guarantors</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Guarantor 1:</td><td style="padding: 4px 8px;">${app.guarantor1Name || 'N/A'} (${app.guarantor1Phone || 'N/A'})</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Guarantor 2:</td><td style="padding: 4px 8px;">${app.guarantor2Name || 'N/A'} (${app.guarantor2Phone || 'N/A'})</td></tr>
-            </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Vote Summary</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Approved by:</td><td style="padding: 4px 8px; color: #155724;">${approvedBy.length ? approvedBy.join(', ') : 'None yet'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Rejected by:</td><td style="padding: 4px 8px; color: #721c24;">${rejectedBy.length ? rejectedBy.join(', ') : 'None yet'}</td></tr>
-                <tr><td style="padding: 4px 8px; font-weight: bold;">Pending review by:</td><td style="padding: 4px 8px; color: #856404;">${pendingBy.length ? pendingBy.join(', ') : 'None'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Counts:</td><td style="padding: 4px 8px;">Approve: ${approvedBy.length} | Reject: ${rejectedBy.length} | Pending: ${pendingBy.length}</td></tr>
-            </table>
-            ${app.treasurerComment ? `
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Treasurer Comment</h2>
-            <p style="background: #f0f7ff; padding: 10px; border-left: 3px solid #1a5276; border-radius: 4px;">${app.treasurerComment}</p>
-            ` : ''}
-            <div style="margin-top: 30px; text-align: center; color: #999; font-size: 10px; border-top: 1px solid #ddd; padding-top: 10px;">
-                Generated on ${new Date().toLocaleString()} | We Masau Loan Committee Portal
-            </div>
-        `;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan Application - ${app.applicationId}</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; color: #333; padding: 20px; }
+        h1 { color: #1a5276; font-size: 22px; margin: 0; }
+        h2 { font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        td { padding: 4px 8px; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #1a5276; padding-bottom: 15px; }
+        .header p { color: #666; font-size: 13px; margin: 5px 0 0 0; }
+        .footer { margin-top: 30px; text-align: center; color: #999; font-size: 10px; border-top: 1px solid #ddd; padding-top: 10px; }
+        .comment { background: #f0f7ff; padding: 10px; border-left: 3px solid #1a5276; border-radius: 4px; }
+        @media print { body { padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>We Masau Loan Committee</h1>
+        <p>Loan Application Details</p>
+    </div>
 
-        document.body.appendChild(pdfContent);
+    <h2>Application Information</h2>
+    <table>
+        <tr><td style="font-weight: bold; width: 40%;">Application ID:</td><td>${app.applicationId}</td></tr>
+        <tr><td style="font-weight: bold;">Status:</td><td style="font-weight: bold; color: ${app.approvalStatus === 'Approved' ? '#155724' : app.approvalStatus === 'Rejected' ? '#721c24' : '#856404'};">${app.approvalStatus}</td></tr>
+        <tr><td style="font-weight: bold;">Submitted:</td><td>${app.timestamp ? new Date(app.timestamp).toLocaleString() : 'N/A'}</td></tr>
+    </table>
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    <h2>Applicant Details</h2>
+    <table>
+        <tr><td style="font-weight: bold; width: 40%;">Full Name:</td><td>${app.fullName || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Member ID:</td><td>${app.memberId || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Email:</td><td>${app.email || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Phone:</td><td>${app.phone || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Join Date:</td><td>${app.joinDate || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Membership Status:</td><td>${app.membershipStatus || 'N/A'}</td></tr>
+    </table>
 
-        try {
-            await html2pdf().set({
-                margin: 10,
-                filename: `${app.applicationId || 'Loan-Application'}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false, width: 700, windowWidth: 700 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(pdfContent).save();
-        } catch (err) {
-            console.error("PDF error:", err);
-            showAlert("Failed to generate PDF: " + err.message, "error");
-        } finally {
-            document.body.removeChild(pdfContent);
-        }
+    <h2>Loan Details</h2>
+    <table>
+        <tr><td style="font-weight: bold; width: 40%;">Loan Type:</td><td>${app.loanType || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Loan Amount:</td><td style="font-weight: bold; font-size: 14px;">MWK ${Number(app.loanAmount || 0).toLocaleString()}</td></tr>
+        <tr><td style="font-weight: bold;">Loan Term:</td><td>${app.loanTerm || 'N/A'} months</td></tr>
+        <tr><td style="font-weight: bold;">Repayment Method:</td><td>${app.repaymentMethod || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Preferred Disbursement:</td><td>${app.preferredDisbursementDate || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Purpose:</td><td>${app.purpose || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Monthly Income:</td><td>MWK ${Number(app.monthlyIncome || 0).toLocaleString()}</td></tr>
+        <tr><td style="font-weight: bold;">Monthly Expenses:</td><td>MWK ${Number(app.monthlyExpenses || 0).toLocaleString()}</td></tr>
+    </table>
+
+    <h2>Employment Details</h2>
+    <table>
+        <tr><td style="font-weight: bold; width: 40%;">Employment Status:</td><td>${app.employmentStatus || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Employer:</td><td>${app.employer || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Years Employed:</td><td>${app.yearsEmployed || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Existing Loans:</td><td>${app.existingLoans || 'N/A'}</td></tr>
+        <tr><td style="font-weight: bold;">Existing Balance:</td><td>MWK ${Number(app.existingBalance || 0).toLocaleString()}</td></tr>
+    </table>
+
+    <h2>Guarantors</h2>
+    <table>
+        <tr><td style="font-weight: bold; width: 40%;">Guarantor 1:</td><td>${app.guarantor1Name || 'N/A'} (${app.guarantor1Phone || 'N/A'})</td></tr>
+        <tr><td style="font-weight: bold;">Guarantor 2:</td><td>${app.guarantor2Name || 'N/A'} (${app.guarantor2Phone || 'N/A'})</td></tr>
+    </table>
+
+    <h2>Vote Summary</h2>
+    <table>
+        <tr><td style="font-weight: bold; width: 40%;">Approved by:</td><td style="color: #155724;">${approvedBy.length ? approvedBy.join(', ') : 'None yet'}</td></tr>
+        <tr><td style="font-weight: bold;">Rejected by:</td><td style="color: #721c24;">${rejectedBy.length ? rejectedBy.join(', ') : 'None yet'}</td></tr>
+        <tr><td style="font-weight: bold;">Pending review by:</td><td style="color: #856404;">${pendingBy.length ? pendingBy.join(', ') : 'None'}</td></tr>
+        <tr><td style="font-weight: bold;">Counts:</td><td>Approve: ${approvedBy.length} | Reject: ${rejectedBy.length} | Pending: ${pendingBy.length}</td></tr>
+    </table>
+
+    ${app.treasurerComment ? `
+    <h2>Treasurer Comment</h2>
+    <p class="comment">${app.treasurerComment}</p>
+    ` : ''}
+
+    <div class="footer">
+        Generated on ${new Date().toLocaleString()} | We Masau Loan Committee Portal
+    </div>
+</body>
+</html>
+        `);
+        printWindow.document.close();
+        printWindow.onload = function() {
+            printWindow.print();
+        };
     }
 
- 
     async function castVote(rowId, vote) {
         if (!currentCommittee) return;
         try {
