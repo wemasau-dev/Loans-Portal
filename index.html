@@ -807,7 +807,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
             });
         });
     }
-        async function downloadPDF(appId) {
+           async function downloadPDF(appId) {
         const app = allApplications.find(a => a.id === appId);
         if (!app) return;
 
@@ -817,19 +817,20 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
         const pendingBy = votes.filter(v => v.vote === "Pending Review").map(v => v.member);
 
         const pdfContent = document.createElement("div");
-        pdfContent.style.cssText = "padding: 30px; font-family: Arial, sans-serif; font-size: 12px; color: #333; width: 700px;";
+        pdfContent.id = "pdf-render-area";
+        pdfContent.style.cssText = "position: absolute; left: -9999px; top: 0; padding: 30px; font-family: Arial, sans-serif; font-size: 12px; color: #333; width: 700px; background: #fff;";
         pdfContent.innerHTML = `
             <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #1a5276; padding-bottom: 15px;">
                 <h1 style="margin: 0; color: #1a5276; font-size: 22px;">We Masau Loan Committee</h1>
                 <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Loan Application Details</p>
             </div>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">📋 Application Information</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Application Information</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Application ID:</td><td style="padding: 4px 8px;">${app.applicationId}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Status:</td><td style="padding: 4px 8px; font-weight: bold; color: ${app.approvalStatus === 'Approved' ? '#155724' : app.approvalStatus === 'Rejected' ? '#721c24' : '#856404'};">${app.approvalStatus}</td></tr>
                 <tr><td style="padding: 4px 8px; font-weight: bold;">Submitted:</td><td style="padding: 4px 8px;">${app.timestamp ? new Date(app.timestamp).toLocaleString() : 'N/A'}</td></tr>
             </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">👤 Applicant Details</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Applicant Details</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Full Name:</td><td style="padding: 4px 8px;">${app.fullName || 'N/A'}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Member ID:</td><td style="padding: 4px 8px;">${app.memberId || 'N/A'}</td></tr>
@@ -838,7 +839,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
                 <tr><td style="padding: 4px 8px; font-weight: bold;">Join Date:</td><td style="padding: 4px 8px;">${app.joinDate || 'N/A'}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Membership Status:</td><td style="padding: 4px 8px;">${app.membershipStatus || 'N/A'}</td></tr>
             </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">💰 Loan Details</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Loan Details</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Loan Type:</td><td style="padding: 4px 8px;">${app.loanType || 'N/A'}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Loan Amount:</td><td style="padding: 4px 8px; font-weight: bold; font-size: 14px;">MWK ${Number(app.loanAmount || 0).toLocaleString()}</td></tr>
@@ -849,7 +850,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
                 <tr><td style="padding: 4px 8px; font-weight: bold;">Monthly Income:</td><td style="padding: 4px 8px;">MWK ${Number(app.monthlyIncome || 0).toLocaleString()}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Monthly Expenses:</td><td style="padding: 4px 8px;">MWK ${Number(app.monthlyExpenses || 0).toLocaleString()}</td></tr>
             </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">💼 Employment Details</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Employment Details</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Employment Status:</td><td style="padding: 4px 8px;">${app.employmentStatus || 'N/A'}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Employer:</td><td style="padding: 4px 8px;">${app.employer || 'N/A'}</td></tr>
@@ -857,26 +858,62 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Existing Loans:</td><td style="padding: 4px 8px;">${app.existingLoans || 'N/A'}</td></tr>
                 <tr><td style="padding: 4px 8px; font-weight: bold;">Existing Balance:</td><td style="padding: 4px 8px;">MWK ${Number(app.existingBalance || 0).toLocaleString()}</td></tr>
             </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">🤝 Guarantors</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Guarantors</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Guarantor 1:</td><td style="padding: 4px 8px;">${app.guarantor1Name || 'N/A'} (${app.guarantor1Phone || 'N/A'})</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Guarantor 2:</td><td style="padding: 4px 8px;">${app.guarantor2Name || 'N/A'} (${app.guarantor2Phone || 'N/A'})</td></tr>
             </table>
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">🗳️ Vote Summary</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Vote Summary</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <tr><td style="padding: 4px 8px; font-weight: bold; width: 40%;">Approved by:</td><td style="padding: 4px 8px; color: #155724;">${approvedBy.length ? approvedBy.join(', ') : 'None yet'}</td></tr>
                 <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Rejected by:</td><td style="padding: 4px 8px; color: #721c24;">${rejectedBy.length ? rejectedBy.join(', ') : 'None yet'}</td></tr>
                 <tr><td style="padding: 4px 8px; font-weight: bold;">Pending review by:</td><td style="padding: 4px 8px; color: #856404;">${pendingBy.length ? pendingBy.join(', ') : 'None'}</td></tr>
-                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Counts:</td><td style="padding: 4px 8px;">👍 Approve: ${approvedBy.length} | 👎 Reject: ${rejectedBy.length} | ⏳ Pending: ${pendingBy.length}</td></tr>
+                <tr style="background: #f9f9f9;"><td style="padding: 4px 8px; font-weight: bold;">Counts:</td><td style="padding: 4px 8px;">Approve: ${approvedBy.length} | Reject: ${rejectedBy.length} | Pending: ${pendingBy.length}</td></tr>
             </table>
             ${app.treasurerComment ? `
-            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">📝 Treasurer Comment</h2>
+            <h2 style="font-size: 16px; color: #1a5276; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Treasurer Comment</h2>
             <p style="background: #f0f7ff; padding: 10px; border-left: 3px solid #1a5276; border-radius: 4px;">${app.treasurerComment}</p>
             ` : ''}
             <div style="margin-top: 30px; text-align: center; color: #999; font-size: 10px; border-top: 1px solid #ddd; padding-top: 10px;">
                 Generated on ${new Date().toLocaleString()} | We Masau Loan Committee Portal
             </div>
         `;
+
+        document.body.appendChild(pdfContent);
+
+        try {
+            await html2pdf().set({
+                margin: 10,
+                filename: `${app.applicationId || 'Loan-Application'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(pdfContent).save();
+        } catch (err) {
+            console.error("PDF error:", err);
+            showAlert("Failed to generate PDF: " + err.message, "error");
+        } finally {
+            document.body.removeChild(pdfContent);
+        }
+    }
+
+        document.body.appendChild(pdfContent);
+
+        try {
+            await html2pdf().set({
+                margin: 10,
+                filename: `${app.applicationId || 'Loan-Application'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(pdfContent).save();
+        } catch (err) {
+            console.error("PDF error:", err);
+            showAlert("Failed to generate PDF: " + err.message, "error");
+        } finally {
+            document.body.removeChild(pdfContent);
+        }
+    }
 
         document.body.appendChild(pdfContent);
 
