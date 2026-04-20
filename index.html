@@ -808,7 +808,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
             });
         });
     }
-           async function downloadPDF(appId) {
+              async function downloadPDF(appId) {
         const app = allApplications.find(a => a.id === appId);
         if (!app) return;
 
@@ -818,8 +818,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
         const pendingBy = votes.filter(v => v.vote === "Pending Review").map(v => v.member);
 
         const pdfContent = document.createElement("div");
-        pdfContent.id = "pdf-render-area";
-        pdfContent.style.cssText = "position: absolute; left: -9999px; top: 0; padding: 30px; font-family: Arial, sans-serif; font-size: 12px; color: #333; width: 700px; background: #fff;";
+        pdfContent.style.cssText = "padding: 30px; font-family: Arial, sans-serif; font-size: 12px; color: #333; width: 700px; background: #fff;";
         pdfContent.innerHTML = `
             <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #1a5276; padding-bottom: 15px;">
                 <h1 style="margin: 0; color: #1a5276; font-size: 22px;">We Masau Loan Committee</h1>
@@ -882,12 +881,14 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
 
         document.body.appendChild(pdfContent);
 
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         try {
             await html2pdf().set({
                 margin: 10,
                 filename: `${app.applicationId || 'Loan-Application'}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
+                html2canvas: { scale: 2, useCORS: true, logging: false, width: 700, windowWidth: 700 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).from(pdfContent).save();
         } catch (err) {
@@ -897,6 +898,7 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
             document.body.removeChild(pdfContent);
         }
     }
+
  
     async function castVote(rowId, vote) {
         if (!currentCommittee) return;
