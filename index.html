@@ -941,6 +941,21 @@ const PROXY_URL = "https://cors-proxy1.wemasau1.workers.dev";
         showAlert("Logged out successfully.", "info");
     });
     document.getElementById("refreshLoansBtn").addEventListener("click", () => { if(currentCommittee) loadAllLoans(); });
+        // Enter key for Login
+    document.getElementById("committeePin").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") document.getElementById("committeeLoginBtn").click();
+    });
+    document.getElementById("committeeUser").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") document.getElementById("committeeLoginBtn").click();
+    });
+
+    // Enter key for Submit Application
+    document.getElementById("applicantForm").addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+            e.preventDefault();
+            document.getElementById("submitLoanBtn").click();
+        }
+    });
 </script>
 </body>
 </html>
